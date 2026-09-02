@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-canvas: 250 246 239;
+  --color-surface: 255 252 247;
+  --color-ink: 52 39 40;
+  --color-muted: 105 87 87;
+  --color-rose: 233 192 196;
+  --color-maroon: 116 44 57;
+  --color-beige: 226 213 194;
+  --color-gold: 201 164 91;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  @apply m-0 min-w-[320px] overflow-x-clip bg-canvas font-sans text-ink antialiased;
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  @apply bg-rose text-ink;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-space {
+    @apply py-14 sm:py-20 lg:py-24;
+  }
+
+  .button-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-maroon px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-maroon/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:bg-muted/50;
+  }
+
+  .button-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-maroon/25 bg-surface px-5 py-2.5 text-sm font-bold text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+  }
+
+  .header-icon-button {
+    @apply size-11 place-items-center rounded-full text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+  }
+
+  .carousel-button {
+    @apply grid size-11 place-items-center rounded-full border border-white/50 bg-surface/90 text-maroon shadow-sm backdrop-blur-sm transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+  }
+
+  .page-button {
+    @apply grid size-10 place-items-center rounded-full border border-beige bg-surface text-sm font-semibold text-ink transition-colors hover:border-maroon/30 hover:bg-rose/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-35;
+  }
+
+  .quantity-button {
+    @apply grid size-9 place-items-center rounded-full text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-30;
+  }
+
+  .form-input {
+    @apply min-h-12 w-full rounded-2xl border border-beige bg-surface px-4 text-base text-ink outline-none transition-shadow focus:border-maroon focus:ring-2 focus:ring-rose aria-[invalid=true]:border-maroon;
+  }
+
+  .skip-link {
+    @apply fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-ink px-5 py-3 text-sm font-bold text-white transition-transform focus:translate-y-0;
+  }
+}
