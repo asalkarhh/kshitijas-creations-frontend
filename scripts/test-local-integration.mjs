@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 const BACKEND_URL = 'http://localhost:8080';
 const FRONTEND_URL = 'http://localhost:5173';
 const ADMIN_EMAIL = 'admin@kshitijascreations.local';
-const ADMIN_PASSWORD = 'AdminLocalSecurePass2026!';
+const ADMIN_PASSWORD = 'AdminLocal123';
 const UPLOAD_DIR = '/Users/saurabhasalkar/business/projects/kshitijas-creations-uploads';
 const runId = Date.now().toString().slice(-4);
 
@@ -109,10 +109,10 @@ fs.writeFileSync(sampleMp4Path, sampleMp4Buffer);
 
 // Upload Image
 const imgFormData = new FormData();
-imgFormData.append('file', new Blob([samplePngBuffer], { type: 'image/png' }), 'kundan-front.png');
+imgFormData.append('files', new Blob([samplePngBuffer], { type: 'image/png' }), 'kundan-front.png');
 imgFormData.append('mediaType', 'IMAGE');
 imgFormData.append('altText', 'Royal Kundan Choker front view');
-imgFormData.append('isPrimary', 'true');
+imgFormData.append('primaryMedia', 'true');
 imgFormData.append('displayOrder', '1');
 
 const uploadImgRes = await fetch(`${BACKEND_URL}/api/v1/admin/products/${product.id}/media`, {
@@ -139,10 +139,10 @@ if (!mediaImgFetch.ok) {
 
 // Upload Video
 const videoFormData = new FormData();
-videoFormData.append('file', new Blob([sampleMp4Buffer], { type: 'video/mp4' }), 'kundan-video.mp4');
+videoFormData.append('files', new Blob([sampleMp4Buffer], { type: 'video/mp4' }), 'kundan-video.mp4');
 videoFormData.append('mediaType', 'VIDEO');
 videoFormData.append('altText', 'Royal Kundan Choker 360 degree video');
-videoFormData.append('isPrimary', 'false');
+videoFormData.append('primaryMedia', 'false');
 videoFormData.append('displayOrder', '2');
 
 const uploadVidRes = await fetch(`${BACKEND_URL}/api/v1/admin/products/${product.id}/media`, {

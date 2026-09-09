@@ -1,4 +1,4 @@
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2, Sparkles, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
@@ -22,17 +22,18 @@ const CartPage = () => {
 
   return (
     <div className="site-container py-10 sm:py-14">
-      <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Cart' }]} />
-      <div className="mt-7 flex items-end justify-between gap-4">
+      <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Shopping cart' }]} />
+      <div className="mt-8 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-maroon/75">
-            Your selection
-          </p>
-          <h1 className="mt-2 font-display text-4xl text-ink sm:text-5xl">Shopping cart</h1>
+          <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-rose/30 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.24em] text-maroon shadow-2xs font-sans">
+            <Sparkles className="size-3 text-gold" />
+            <span>Bag Review</span>
+          </div>
+          <h1 className="mt-2 font-display text-4xl font-extrabold text-ink sm:text-5xl">Shopping cart</h1>
         </div>
         {items.length > 0 && (
           <button
-            className="text-sm font-semibold text-maroon hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon rounded"
+            className="text-xs font-bold text-maroon hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon rounded-full px-3 py-1 bg-rose/30 hover:bg-rose/50 transition-colors font-sans"
             onClick={() => setConfirmClear(true)}
             type="button"
             aria-label="Clear complete cart"
@@ -43,55 +44,55 @@ const CartPage = () => {
       </div>
 
       {items.length === 0 ? (
-        <div className="mt-10">
+        <div className="mt-12 rounded-4xl border border-beige/80 bg-surface/90 p-8 sm:p-12 shadow-soft">
           <EmptyState
             action={
-              <Link className="button-primary" to="/products">
+              <Link className="button-primary mt-4 shadow-md" to="/products">
                 Browse products
               </Link>
             }
-            description="Explore the collection and add a handmade piece you love."
+            description="Your cart is currently empty. Add pieces from our collection to get started."
             title="Your cart is waiting"
           />
         </div>
       ) : (
-        <div className="mt-10 grid gap-9 lg:grid-cols-[1fr_22rem] lg:items-start">
-          <div className="space-y-6">
-            <ul className="divide-y divide-beige border-y border-beige">
+        <div className="mt-10 grid gap-9 lg:grid-cols-[1fr_24rem] lg:items-start">
+          <div className="space-y-4">
+            <ul className="space-y-4">
               {items.map((item) => (
                 <li
-                  className="grid grid-cols-[5.5rem_1fr] gap-4 py-5 sm:grid-cols-[7rem_1fr_auto] sm:items-center"
+                  className="grid grid-cols-[5.5rem_1fr] gap-4 p-5 rounded-3xl border border-beige/80 bg-surface/90 shadow-soft sm:grid-cols-[7rem_1fr_auto] sm:items-center transition-all hover:border-gold/40"
                   key={item.productId}
                 >
                   <Link
-                    className="aspect-square overflow-hidden rounded-2xl bg-beige"
+                    className="aspect-square overflow-hidden rounded-2xl bg-beige/40 border border-beige/60"
                     to={`/products/${item.slug}`}
                     aria-label={`View ${item.name} details`}
                   >
                     <ProductMedia
                       alt={item.imageAlt || item.name}
-                      className="object-[70%_center]"
+                      className="h-full w-full object-cover object-center"
                       src={item.primaryImageUrl || item.image}
                     />
                   </Link>
                   <div className="min-w-0">
                     <Link
-                      className="font-display text-lg text-ink hover:text-maroon"
+                      className="font-display text-lg font-bold text-ink hover:text-maroon transition-colors line-clamp-1"
                       to={`/products/${item.slug}`}
                     >
                       {item.name}
                     </Link>
                     {item.productCode && (
-                      <span className="mt-0.5 block text-xs font-bold uppercase tracking-wider text-muted">
+                      <span className="mt-0.5 block text-[0.68rem] font-mono font-bold uppercase tracking-wider text-muted/70">
                         CODE: {item.productCode}
                       </span>
                     )}
-                    <div className="mt-1 flex items-center gap-2 text-sm">
-                      <span className="text-muted text-xs">Unit price:</span>
-                      <ProductPrice className="font-medium" price={item.price} />
+                    <div className="mt-1.5 flex items-center gap-2 text-sm font-sans">
+                      <span className="text-muted text-xs">Unit:</span>
+                      <ProductPrice className="font-bold text-ink" price={item.price} />
                     </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <div className="inline-flex items-center rounded-full border border-beige bg-surface">
+                    <div className="mt-3.5 flex items-center gap-2">
+                      <div className="inline-flex items-center rounded-full border border-beige bg-canvas/60">
                         <button
                           aria-label={`Decrease ${item.name} quantity`}
                           className="quantity-button"
@@ -103,7 +104,7 @@ const CartPage = () => {
                         </button>
                         <span
                           aria-label={`Quantity: ${item.quantity}`}
-                          className="min-w-8 text-center text-sm font-semibold text-ink"
+                          className="min-w-8 text-center text-sm font-extrabold text-ink font-sans"
                         >
                           {item.quantity}
                         </span>
@@ -119,7 +120,7 @@ const CartPage = () => {
                       </div>
                       <button
                         aria-label={`Remove ${item.name} from cart`}
-                        className="grid size-9 place-items-center rounded-full text-muted hover:bg-rose/30 hover:text-maroon focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon"
+                        className="grid size-9 place-items-center rounded-full text-muted hover:bg-rose/40 hover:text-maroon focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon transition-colors"
                         onClick={() => removeItem(item.productId)}
                         type="button"
                       >
@@ -128,8 +129,8 @@ const CartPage = () => {
                     </div>
                   </div>
                   <div className="col-start-2 sm:col-auto sm:text-right">
-                    <span className="text-xs text-muted block sm:hidden">Line total:</span>
-                    <p className="text-sm font-bold text-ink">
+                    <span className="text-xs text-muted block sm:hidden font-sans">Total:</span>
+                    <p className="text-base font-black text-maroon font-sans">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
@@ -137,24 +138,34 @@ const CartPage = () => {
               ))}
             </ul>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-4">
               <Link className="button-secondary inline-flex items-center gap-2" to="/products">
                 <ArrowLeft className="size-4" /> Continue Shopping
               </Link>
             </div>
           </div>
 
-          <aside className="rounded-3xl border border-beige bg-surface p-6 shadow-soft">
-            <h2 className="font-display text-2xl text-ink">Order summary</h2>
-            <div className="mt-5 flex items-center justify-between border-b border-beige pb-5 text-sm">
-              <span className="text-muted">Estimated Subtotal</span>
-              <strong className="text-lg text-maroon">{formatPrice(subtotal)}</strong>
+          <aside className="rounded-4xl border border-beige/80 bg-surface/90 p-6 sm:p-7 shadow-soft sticky top-28">
+            <h2 className="font-display text-2xl font-bold text-ink">Order Summary</h2>
+            <div className="mt-5 space-y-3 border-b border-beige/70 pb-5 text-sm font-sans">
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Total Pieces</span>
+                <span className="font-bold text-ink">{items.reduce((acc, i) => acc + i.quantity, 0)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted">Subtotal</span>
+                <strong className="text-2xl font-black text-maroon">{formatPrice(subtotal)}</strong>
+              </div>
             </div>
-            <p className="mt-4 text-xs leading-5 text-muted">
-              Final price and product availability will be verified when you submit the order.
-            </p>
-            <Link className="button-primary mt-6 w-full justify-center" to="/checkout">
-              <ShoppingBag aria-hidden="true" className="size-4" /> Proceed to Checkout
+            
+            <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-rose/25 p-3.5 text-xs text-muted font-sans leading-relaxed">
+              <ShieldCheck className="size-4.5 text-maroon shrink-0 mt-0.5" />
+              <span>Final price and product availability will be verified when you submit the order.</span>
+            </div>
+
+            <Link className="button-primary mt-6 w-full justify-center shadow-md hover:shadow-lg" to="/checkout">
+              <ShoppingBag aria-hidden="true" className="size-4.5" />
+              <span>Proceed to Checkout</span>
             </Link>
           </aside>
         </div>
@@ -162,7 +173,7 @@ const CartPage = () => {
 
       <ConfirmationDialog
         confirmLabel="Clear cart"
-        description="This will remove every item currently saved in your cart."
+        description="This will remove every item currently saved in your shopping cart."
         isOpen={confirmClear}
         onClose={() => setConfirmClear(false)}
         onConfirm={clearCart}

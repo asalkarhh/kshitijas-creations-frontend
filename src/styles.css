@@ -4,14 +4,14 @@
 
 :root {
   color-scheme: light;
-  --color-canvas: 250 246 239;
-  --color-surface: 255 252 247;
-  --color-ink: 52 39 40;
-  --color-muted: 105 87 87;
-  --color-rose: 233 192 196;
-  --color-maroon: 116 44 57;
-  --color-beige: 226 213 194;
-  --color-gold: 201 164 91;
+  --color-canvas: 250 247 242; /* #FAF7F2 warm alabaster */
+  --color-surface: 255 255 255; /* #FFFFFF pure surface */
+  --color-ink: 43 30 33; /* #2B1E21 deep charcoal plum */
+  --color-muted: 110 88 91; /* #6E585B soft warm taupe */
+  --color-rose: 247 235 239; /* #F7EBEF delicate blush */
+  --color-maroon: 107 29 47; /* #6B1D2F rich velvet maroon */
+  --color-beige: 232 222 209; /* #E8DED1 warm linen beige */
+  --color-gold: 197 160 89; /* #C5A059 vintage champagne gold */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -26,15 +26,36 @@ body {
   @apply m-0 min-w-[320px] overflow-x-clip bg-canvas font-sans text-ink antialiased;
 }
 
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(232, 222, 209, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(107, 29, 47, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 29, 47, 0.45);
+}
+
 button,
 a,
 input,
-select {
+select,
+textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {
-  @apply bg-rose text-ink;
+  background-color: rgba(247, 235, 239, 0.9);
+  color: rgb(107, 29, 47);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -54,39 +75,71 @@ select {
 
 @layer components {
   .site-container {
-    @apply mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
   .section-space {
     @apply py-14 sm:py-20 lg:py-24;
   }
 
+  /* Luxury Glassmorphism & Card styling */
+  .glass-card {
+    @apply rounded-3xl border border-white/60 bg-surface/85 shadow-soft backdrop-blur-md;
+  }
+
+  .glass-card-hover {
+    @apply rounded-3xl border border-white/60 bg-surface/85 shadow-soft backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-card;
+  }
+
+  .luxury-border {
+    @apply border border-beige/80 transition-colors duration-200 hover:border-gold/50;
+  }
+
+  /* Buttons */
   .button-primary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-maroon px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-maroon/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:bg-muted/50;
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-maroon px-6 py-3 text-sm font-bold tracking-wide text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-maroon/90 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon active:translate-y-0 disabled:cursor-not-allowed disabled:bg-muted/40 disabled:shadow-none disabled:transform-none;
   }
 
   .button-secondary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-maroon/25 bg-surface px-5 py-2.5 text-sm font-bold text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-maroon/20 bg-surface px-6 py-3 text-sm font-bold tracking-wide text-maroon shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-maroon/40 hover:bg-rose/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .button-gold {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-bold tracking-wide text-ink shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-gold/90 hover:shadow-glow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold active:translate-y-0;
+  }
+
+  .button-whatsapp {
+    @apply inline-flex min-h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold tracking-wide text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#20bd5a] hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] active:translate-y-0;
   }
 
   .header-icon-button {
-    @apply size-11 place-items-center rounded-full text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+    @apply grid size-11 place-items-center rounded-full text-ink transition-colors hover:bg-rose/50 hover:text-maroon focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
   }
 
   .carousel-button {
-    @apply grid size-11 place-items-center rounded-full border border-white/50 bg-surface/90 text-maroon shadow-sm backdrop-blur-sm transition-colors hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
+    @apply grid size-11 place-items-center rounded-full border border-white/80 bg-white/90 text-maroon shadow-md backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-white hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon;
   }
 
   .page-button {
-    @apply grid size-10 place-items-center rounded-full border border-beige bg-surface text-sm font-semibold text-ink transition-colors hover:border-maroon/30 hover:bg-rose/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-35;
+    @apply grid size-10 place-items-center rounded-full border border-beige/80 bg-surface text-sm font-semibold text-ink shadow-sm transition-all duration-200 hover:border-maroon/40 hover:bg-rose/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none;
   }
 
   .quantity-button {
-    @apply grid size-9 place-items-center rounded-full text-maroon transition-colors hover:bg-rose/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-30;
+    @apply grid size-9 place-items-center rounded-full text-maroon transition-all duration-150 hover:bg-rose/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon disabled:cursor-not-allowed disabled:opacity-30;
   }
 
+  /* Form Elements */
   .form-input {
-    @apply min-h-12 w-full rounded-2xl border border-beige bg-surface px-4 text-base text-ink outline-none transition-shadow focus:border-maroon focus:ring-2 focus:ring-rose aria-[invalid=true]:border-maroon;
+    @apply min-h-12 w-full rounded-2xl border border-beige bg-surface px-4 py-3 text-base text-ink placeholder:text-muted/60 outline-none transition-all duration-200 focus:border-maroon focus:ring-4 focus:ring-rose/60;
+  }
+
+  .form-input[aria-invalid="true"] {
+    border-color: #e11d48;
+  }
+
+  .form-input[aria-invalid="true"]:focus {
+    border-color: #be123c;
+    box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.2);
   }
 
   .skip-link {

@@ -32,6 +32,11 @@ const attachHeaders = (config: InternalAxiosRequestConfig) => {
     }
   }
 
+  // If sending FormData, delete Content-Type to let the browser set multipart/form-data with boundary
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    config.headers.delete('Content-Type');
+  }
+
   return config;
 };
 

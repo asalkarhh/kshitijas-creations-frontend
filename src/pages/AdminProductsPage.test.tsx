@@ -34,7 +34,7 @@ describe('AdminProductsPage', () => {
 
     // Filter by Category
     const categorySelect = screen.getByLabelText(/Filter by category/i);
-    await user.selectOptions(categorySelect, 'necklaces');
+    await user.selectOptions(categorySelect, 'cat-2');
 
     expect(await screen.findByText('Vintage Pearl Necklace')).toBeVisible();
     expect(screen.queryByText('Rose Gold Studs')).toBeNull();

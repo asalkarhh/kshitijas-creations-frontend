@@ -414,7 +414,7 @@ export const handlers = [
       return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     const url = new URL(request.url);
-    const category = url.searchParams.get('category');
+    const categoryId = url.searchParams.get('categoryId');
     const search = url.searchParams.get('search')?.toLowerCase();
     const available = url.searchParams.get('available');
     const featured = url.searchParams.get('featured');
@@ -423,8 +423,8 @@ export const handlers = [
 
     let filtered = [...mockApiProducts];
 
-    if (category) {
-      filtered = filtered.filter((p) => p.category.slug === category || p.category.id === category);
+    if (categoryId) {
+      filtered = filtered.filter((p) => p.category.id === categoryId);
     }
     if (search) {
       filtered = filtered.filter(
@@ -791,7 +791,5 @@ export const handlers = [
     });
   }),
 ];
-
-
 
 

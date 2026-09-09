@@ -84,7 +84,7 @@ export interface AdminProductRequest {
 
 export interface AdminProductFilterParams {
   search?: string;
-  category?: string;
+  categoryId?: string | number;
   available?: boolean | string;
   featured?: boolean | string;
   sort?: string;
@@ -99,4 +99,3 @@ export interface BannerFilterParams {
   size?: number;
   sort?: string;
 }
-

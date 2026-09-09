@@ -1,5 +1,6 @@
 import type { PaginatedResponse, Product } from '../types';
 import { apiClient } from './client';
+import { normalizeProduct } from './normalizers';
 
 export interface ProductQuery {
   page?: number;
@@ -12,7 +13,10 @@ export interface ProductQuery {
 }
 
 export const productsApi = {
-  list: async (params?: ProductQuery) =>
-    (await apiClient.get<PaginatedResponse<Product>>('/public/products', { params })).data,
-  bySlug: async (slug: string) => (await apiClient.get<Product>(`/public/products/${slug}`)).data,
+  list: async (params?: ProductQuery): Promise<PaginatedResponse<Product>> => {
+    const response = (await apiClient.get<PaginatedResponse<unknown>>('/public/products', { params })).data;
+    return { ...response, content: response.content.map(normalizeProduct) };
+  },
+  bySlug: async (slug: string): Promise<Product> =>
+    normalizeProduct((await apiClient.get<unknown>(`/public/products/${slug}`)).data),
 };

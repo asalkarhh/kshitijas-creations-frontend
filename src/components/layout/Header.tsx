@@ -8,8 +8,10 @@ import { BrandMark } from './BrandMark';
 import { MobileNavigation } from './MobileNavigation';
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  `rounded-md px-1 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-maroon ${
-    isActive ? 'text-maroon' : 'text-ink/75 hover:text-maroon'
+  `relative px-3.5 py-2 text-sm font-semibold tracking-wide transition-all duration-200 rounded-full ${
+    isActive
+      ? 'text-maroon bg-rose/60 shadow-xs font-bold'
+      : 'text-ink/80 hover:text-maroon hover:bg-rose/30'
   }`;
 
 export const Header = () => {
@@ -17,11 +19,11 @@ export const Header = () => {
   const { itemCount } = useCart();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-beige/80 bg-canvas/95 backdrop-blur-lg">
+    <header className="sticky top-0 z-40 border-b border-beige/60 bg-canvas/90 backdrop-blur-xl shadow-xs transition-all duration-200">
       <AnnouncementBar />
       <div className="site-container flex h-20 items-center justify-between gap-4">
         <BrandMark />
-        <nav aria-label="Main navigation" className="hidden items-center gap-6 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-1.5 lg:flex">
           <NavLink className={navClass} end to="/">
             Home
           </NavLink>
@@ -29,38 +31,38 @@ export const Header = () => {
             Products
           </NavLink>
           <Link
-            className="rounded-md px-1 py-2 text-sm font-semibold text-ink/75 hover:text-maroon focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon"
+            className="px-3.5 py-2 text-sm font-semibold tracking-wide text-ink/80 transition-all duration-200 hover:bg-rose/30 hover:text-maroon rounded-full"
             to="/#categories"
           >
             Categories
           </Link>
           <a
-            className="rounded-md px-1 py-2 text-sm font-semibold text-ink/75 hover:text-maroon focus-visible:outline focus-visible:outline-2 focus-visible:outline-maroon"
+            className="px-3.5 py-2 text-sm font-semibold tracking-wide text-ink/80 transition-all duration-200 hover:bg-rose/30 hover:text-maroon rounded-full inline-flex items-center gap-1.5"
             href={env.instagramUrl}
             rel="noreferrer"
             target="_blank"
           >
-            Instagram
+            <span>Instagram</span>
           </a>
         </nav>
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <a
             aria-label="Visit Kshitija's Creations on Instagram"
-            className="header-icon-button hidden sm:grid"
+            className="header-icon-button hidden sm:grid border border-beige/60 bg-surface/80 shadow-xs hover:border-gold/50"
             href={env.instagramUrl}
             rel="noreferrer"
             target="_blank"
           >
-            <Instagram aria-hidden="true" className="size-5" />
+            <Instagram aria-hidden="true" className="size-4.5 text-maroon" />
           </a>
           <Link
             aria-label={`Cart with ${itemCount} items`}
-            className="header-icon-button relative"
+            className="header-icon-button relative border border-beige/60 bg-surface/80 shadow-xs hover:border-maroon/40"
             to="/cart"
           >
-            <ShoppingBag aria-hidden="true" className="size-5" />
+            <ShoppingBag aria-hidden="true" className="size-4.5 text-maroon" />
             {itemCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid min-h-4 min-w-4 place-items-center rounded-full bg-maroon px-1 text-[0.6rem] font-bold text-white">
+              <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-maroon px-1 text-[0.65rem] font-bold text-white shadow-sm ring-2 ring-white animate-pulse">
                 {itemCount > 99 ? '99+' : itemCount}
               </span>
             )}
@@ -68,11 +70,11 @@ export const Header = () => {
           <button
             aria-expanded={mobileOpen}
             aria-label="Open navigation menu"
-            className="header-icon-button lg:hidden"
+            className="header-icon-button border border-beige/60 bg-surface/80 lg:hidden"
             onClick={() => setMobileOpen(true)}
             type="button"
           >
-            <Menu aria-hidden="true" className="size-5" />
+            <Menu aria-hidden="true" className="size-5 text-ink" />
           </button>
         </div>
       </div>

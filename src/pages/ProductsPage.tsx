@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Search, X, Filter } from 'lucide-react';
+import { SlidersHorizontal, Search, X, Filter, Sparkles } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { ProductGrid } from '../components/product/ProductGrid';
@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 
 const sortOptions = [
   { label: 'Recommended', value: '' },
-  { label: 'Newest', value: 'newest' },
+  { label: 'Newest Arrivals', value: 'newest' },
   { label: 'Price: Low to High', value: 'priceAsc' },
   { label: 'Price: High to Low', value: 'priceDesc' },
 ];
@@ -90,19 +90,53 @@ const ProductsPage = () => {
 
   return (
     <div className="site-container py-10 sm:py-14">
-      <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Products' }]} />
-      <header className="mt-7 max-w-2xl">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-maroon/75">The catalogue</p>
-        <h1 className="mt-2 font-display text-4xl text-ink sm:text-5xl">
+      <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'All Creations' }]} />
+      
+      {/* Header */}
+      <header className="mt-8 max-w-3xl">
+        <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-rose/30 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.24em] text-maroon shadow-2xs font-sans">
+          <Sparkles className="size-3 text-gold" />
+          <span>The Atelier Catalogue</span>
+        </div>
+        <h1 className="mt-3 font-display text-4xl font-extrabold text-ink sm:text-5xl lg:text-6xl tracking-tight">
           Find something made for you
         </h1>
-        <p className="mt-4 leading-7 text-muted">
-          Browse the current small-batch collection. Availability is shown on every piece.
+        <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base font-sans">
+          Explore our small-batch earrings, chokers, necklaces, bracelets, and celebratory keepsakes. Every piece is handcrafted in India with love.
         </p>
       </header>
 
+      {/* Category Pills Bar */}
+      <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <button
+          onClick={() => setParam('category', '')}
+          className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-xs ${
+            !category
+              ? 'bg-maroon text-white shadow-sm'
+              : 'bg-surface border border-beige/80 text-ink/80 hover:bg-rose/40 hover:text-maroon'
+          }`}
+          type="button"
+        >
+          All Pieces
+        </button>
+        {categories.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => setParam('category', c.slug)}
+            className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-xs ${
+              category === c.slug
+                ? 'bg-maroon text-white shadow-sm'
+                : 'bg-surface border border-beige/80 text-ink/80 hover:bg-rose/40 hover:text-maroon'
+            }`}
+            type="button"
+          >
+            {c.name}
+          </button>
+        ))}
+      </div>
+
       {/* Filter / Search Bar */}
-      <div className="my-9 border-y border-beige py-5">
+      <div className="my-7 rounded-3xl border border-beige/80 bg-surface/90 p-4 sm:p-5 shadow-soft">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Search Input */}
           <div className="relative flex-1 max-w-md">
@@ -114,7 +148,7 @@ const ProductsPage = () => {
               placeholder="Search products..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full pl-10 pr-9 py-2.5 rounded-full border border-beige bg-surface text-sm text-ink placeholder:text-muted focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose"
+              className="w-full pl-10 pr-9 py-2.5 rounded-full border border-beige bg-canvas/60 text-sm text-ink placeholder:text-muted/70 focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose/80 font-sans"
             />
             {searchInput && (
               <button
@@ -133,26 +167,26 @@ const ProductsPage = () => {
 
           {/* Desktop Filter Controls */}
           <div className="hidden sm:flex sm:items-center sm:gap-3">
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-ink">
-              <SlidersHorizontal aria-hidden="true" className="size-4 text-maroon" /> Filters
-            </div>
-
             <select
-              className="min-h-11 rounded-full border border-beige bg-surface px-4 text-sm text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose"
+              className="min-h-11 rounded-full border border-beige bg-canvas/60 px-4 text-xs font-bold text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose/80 font-sans"
               aria-label="Filter by category"
               onChange={(event) => setParam('category', event.target.value)}
               value={category}
             >
-              <option value="">All categories</option>
-              {categories.map((item) => (
-                <option key={item.id} value={item.slug}>
-                  {item.name}
+              <option value="">All Categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.slug}>
+                  {c.name}
                 </option>
               ))}
             </select>
 
+            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted font-sans">
+              <SlidersHorizontal aria-hidden="true" className="size-3.5 text-maroon" /> Sort
+            </div>
+
             <select
-              className="min-h-11 rounded-full border border-beige bg-surface px-4 text-sm text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose"
+              className="min-h-11 rounded-full border border-beige bg-canvas/60 px-4 text-xs font-bold text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose/80 font-sans"
               aria-label="Sort products"
               onChange={(event) => setParam('sort', event.target.value)}
               value={sort}
@@ -167,22 +201,23 @@ const ProductsPage = () => {
           <div className="flex sm:hidden items-center justify-between gap-2">
             <button
               onClick={() => setMobileFiltersOpen((prev) => !prev)}
-              className="flex items-center gap-2 rounded-full border border-beige bg-surface px-4 py-2 text-sm font-semibold text-ink hover:bg-rose/10"
+              className="flex items-center gap-2 rounded-full border border-beige bg-canvas/70 px-4 py-2 text-xs font-bold text-ink"
               type="button"
               aria-expanded={mobileFiltersOpen}
             >
-              <Filter className="size-4 text-maroon" />
-              {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+              <Filter className="size-3.5 text-maroon" />
+              {mobileFiltersOpen ? 'Hide Filters' : 'Filter & Sort'}
               {hasFilters && <span className="size-2 rounded-full bg-maroon" />}
             </button>
 
             {hasFilters && (
               <button
                 onClick={clearFilters}
-                className="text-xs font-semibold text-maroon hover:underline"
+                className="text-xs font-bold text-maroon hover:underline"
                 type="button"
+                aria-label="Reset all filters"
               >
-                Clear all
+                Reset
               </button>
             )}
           </div>
@@ -190,33 +225,33 @@ const ProductsPage = () => {
 
         {/* Mobile Filter Drawer */}
         {mobileFiltersOpen && (
-          <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-rose/10 p-4 sm:hidden">
+          <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-rose/20 p-4 sm:hidden">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5" htmlFor="mobile-category">
+              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5 font-sans" htmlFor="mobile-category">
                 Category
               </label>
               <select
                 id="mobile-category"
-                className="w-full rounded-full border border-beige bg-surface px-4 py-2 text-sm text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose"
+                aria-label="Filter by category"
+                className="w-full rounded-full border border-beige bg-surface px-4 py-2 text-xs font-bold text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose font-sans"
                 onChange={(event) => setParam('category', event.target.value)}
                 value={category}
               >
-                <option value="">All categories</option>
-                {categories.map((item) => (
-                  <option key={item.id} value={item.slug}>
-                    {item.name}
+                <option value="">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.slug}>
+                    {c.name}
                   </option>
                 ))}
               </select>
             </div>
-
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5" htmlFor="mobile-sort">
-                Sort By
+              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5 font-sans" htmlFor="mobile-sort">
+                Sort Options
               </label>
               <select
                 id="mobile-sort"
-                className="w-full rounded-full border border-beige bg-surface px-4 py-2 text-sm text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose"
+                className="w-full rounded-full border border-beige bg-surface px-4 py-2 text-xs font-bold text-ink focus:border-maroon focus:outline-none focus:ring-2 focus:ring-rose font-sans"
                 onChange={(event) => setParam('sort', event.target.value)}
                 value={sort}
               >
@@ -231,10 +266,10 @@ const ProductsPage = () => {
         {/* Active Filter Summary Pills */}
         {hasFilters && (
           <div className="mt-4 flex flex-wrap items-center gap-2 pt-3 border-t border-beige/60">
-            <span className="text-xs font-medium text-muted">Active filters:</span>
+            <span className="text-xs font-bold text-muted font-sans">Active filters:</span>
             {category && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface border border-beige px-3 py-1 text-xs font-medium text-ink shadow-sm">
-                Category: <strong className="font-semibold text-maroon">{selectedCategoryName}</strong>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-beige/80 px-3 py-1 text-xs font-semibold text-ink shadow-xs">
+                Category: <strong className="font-bold text-maroon">{selectedCategoryName}</strong>
                 <button
                   onClick={() => removeParam('category')}
                   className="ml-1 p-0.5 text-muted hover:text-maroon rounded-full"
@@ -246,8 +281,8 @@ const ProductsPage = () => {
               </span>
             )}
             {search && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface border border-beige px-3 py-1 text-xs font-medium text-ink shadow-sm">
-                Search: &ldquo;<strong className="font-semibold text-maroon">{search}</strong>&rdquo;
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-beige/80 px-3 py-1 text-xs font-semibold text-ink shadow-xs">
+                Keyword: &ldquo;<strong className="font-bold text-maroon">{search}</strong>&rdquo;
                 <button
                   onClick={() => removeParam('search')}
                   className="ml-1 p-0.5 text-muted hover:text-maroon rounded-full"
@@ -259,8 +294,8 @@ const ProductsPage = () => {
               </span>
             )}
             {sort && selectedSortOption && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface border border-beige px-3 py-1 text-xs font-medium text-ink shadow-sm">
-                Sort: <strong className="font-semibold text-maroon">{selectedSortOption.label}</strong>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-beige/80 px-3 py-1 text-xs font-semibold text-ink shadow-xs">
+                Sort: <strong className="font-bold text-maroon">{selectedSortOption.label}</strong>
                 <button
                   onClick={() => removeParam('sort')}
                   className="ml-1 p-0.5 text-muted hover:text-maroon rounded-full"
@@ -273,8 +308,9 @@ const ProductsPage = () => {
             )}
             <button
               onClick={clearFilters}
-              className="ml-auto text-xs font-semibold text-maroon hover:underline"
+              className="ml-auto text-xs font-bold text-maroon hover:underline"
               type="button"
+              aria-label="Clear all filters"
             >
               Clear all filters
             </button>
@@ -286,19 +322,21 @@ const ProductsPage = () => {
         <ErrorMessage message="We couldn't load the products. Please try again." onRetry={refetch} />
       ) : (
         <>
-          <p className="mb-6 text-sm text-muted">
-            {isLoading ? 'Loading...' : `${productsData?.totalElements ?? 0} ${productsData?.totalElements === 1 ? 'piece' : 'pieces'}`}
-          </p>
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted font-sans">
+              {isLoading ? 'Discovering pieces...' : `Showing ${productsData?.totalElements ?? 0} ${productsData?.totalElements === 1 ? 'handcrafted creation' : 'handcrafted creations'}`}
+            </p>
+          </div>
           
           {isLoading ? (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-7">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)}
             </div>
           ) : (
             <>
               <ProductGrid products={productsData?.content || []} />
               {productsData && productsData.totalPages > 1 && (
-                <div className="mt-12 flex justify-center">
+                <div className="mt-14 flex justify-center">
                   <Pagination 
                     currentPage={page} 
                     totalPages={productsData.totalPages} 
@@ -320,4 +358,3 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-

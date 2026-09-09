@@ -197,10 +197,8 @@ const AdminProductFormPage = () => {
     for (const upload of uploads) {
       const formData = new FormData();
       formData.append('files', upload.file);
-      formData.append('file', upload.file);
       formData.append('mediaType', upload.isVideo ? 'VIDEO' : 'IMAGE');
       formData.append('altText', upload.altText || upload.file.name);
-      formData.append('isPrimary', String(upload.isPrimary));
       formData.append('primaryMedia', String(upload.isPrimary));
       formData.append('displayOrder', String(upload.displayOrder));
 
@@ -228,11 +226,11 @@ const AdminProductFormPage = () => {
       productCode: formValues.productCode.trim(),
       shortDescription: formValues.shortDescription?.trim() || undefined,
       description: formValues.description.trim(),
-      price: formValues.price,
-      available: formValues.available,
-      featured: formValues.featured,
+      price: Number(formValues.price),
+      available: Boolean(formValues.available),
+      featured: Boolean(formValues.featured),
       instagramUrl: formValues.instagramUrl?.trim() || undefined,
-      displayOrder: formValues.displayOrder ?? 0,
+      displayOrder: Number(formValues.displayOrder ?? 0),
     };
 
     let targetProductId = id;

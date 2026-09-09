@@ -36,7 +36,7 @@ const AdminProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchParam = searchParams.get('search') || '';
-  const categoryParam = searchParams.get('category') || '';
+  const categoryParam = searchParams.get('categoryId') || '';
   const availableParam = searchParams.get('available') || '';
   const featuredParam = searchParams.get('featured') || '';
   const sortParam = searchParams.get('sort') || '';
@@ -83,7 +83,7 @@ const AdminProductsPage = () => {
       'products',
       {
         search: searchParam,
-        category: categoryParam,
+        categoryId: categoryParam,
         available: availableParam,
         featured: featuredParam,
         sort: sortParam,
@@ -93,7 +93,7 @@ const AdminProductsPage = () => {
     queryFn: () =>
       adminApi.getProducts({
         search: searchParam || undefined,
-        category: categoryParam || undefined,
+        categoryId: categoryParam || undefined,
         available: availableParam ? availableParam === 'true' : undefined,
         featured: featuredParam ? featuredParam === 'true' : undefined,
         sort: sortParam || undefined,
@@ -190,12 +190,12 @@ const AdminProductsPage = () => {
             <select
               aria-label="Filter by category"
               className="form-input text-sm"
-              onChange={(e) => updateParam('category', e.target.value)}
+              onChange={(e) => updateParam('categoryId', e.target.value)}
               value={categoryParam}
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>
+                <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}

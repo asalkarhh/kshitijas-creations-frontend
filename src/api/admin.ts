@@ -13,6 +13,13 @@ import type {
 } from '../types';
 import type { CreateOrderResponse, DashboardResponse } from '../types/api';
 import { apiClient } from './client';
+import {
+  normalizeAdminOrder,
+  normalizeBanner,
+  normalizeCategory,
+  normalizeMedia,
+  normalizeProduct,
+} from './normalizers';
 
 export const adminApi = {
   // Dashboard
@@ -54,45 +61,45 @@ export const adminApi = {
     ).data,
 
   getOrder: async (id: string): Promise<AdminOrderDetail> =>
-    (await apiClient.get<AdminOrderDetail>(`/admin/orders/${id}`)).data,
+    normalizeAdminOrder((await apiClient.get<unknown>(`/admin/orders/${id}`)).data),
 
   updateOrderStatus: async (id: string, status: string): Promise<AdminOrderDetail> =>
-    (
-      await apiClient.patch<AdminOrderDetail>(`/admin/orders/${id}/status`, {
+    normalizeAdminOrder((
+      await apiClient.patch<unknown>(`/admin/orders/${id}/status`, {
         status,
       })
-    ).data,
+    ).data),
 
   // Categories
   getCategories: async (): Promise<Category[]> =>
-    (await apiClient.get<Category[]>('/admin/categories')).data,
+    (await apiClient.get<unknown[]>('/admin/categories')).data.map(normalizeCategory),
 
   createCategory: async (payload: AdminCategoryRequest): Promise<Category> =>
-    (await apiClient.post<Category>('/admin/categories', payload)).data,
+    normalizeCategory((await apiClient.post<unknown>('/admin/categories', payload)).data),
 
   updateCategory: async (id: string, payload: AdminCategoryRequest): Promise<Category> =>
-    (await apiClient.put<Category>(`/admin/categories/${id}`, payload)).data,
+    normalizeCategory((await apiClient.put<unknown>(`/admin/categories/${id}`, payload)).data),
 
   deleteCategory: async (id: string): Promise<void> => {
     await apiClient.delete(`/admin/categories/${id}`);
   },
 
   // Products
-  getProducts: async (params?: AdminProductFilterParams): Promise<PaginatedResponse<Product>> =>
-    (
-      await apiClient.get<PaginatedResponse<Product>>('/admin/products', {
-        params,
-      })
-    ).data,
+  getProducts: async (params?: AdminProductFilterParams): Promise<PaginatedResponse<Product>> => {
+    const response = (
+      await apiClient.get<PaginatedResponse<unknown>>('/admin/products', { params })
+    ).data;
+    return { ...response, content: response.content.map(normalizeProduct) };
+  },
 
   getProduct: async (id: string): Promise<Product> =>
-    (await apiClient.get<Product>(`/admin/products/${id}`)).data,
+    normalizeProduct((await apiClient.get<unknown>(`/admin/products/${id}`)).data),
 
   createProduct: async (payload: AdminProductRequest): Promise<Product> =>
-    (await apiClient.post<Product>('/admin/products', payload)).data,
+    normalizeProduct((await apiClient.post<unknown>('/admin/products', payload)).data),
 
   updateProduct: async (id: string, payload: AdminProductRequest): Promise<Product> =>
-    (await apiClient.put<Product>(`/admin/products/${id}`, payload)).data,
+    normalizeProduct((await apiClient.put<unknown>(`/admin/products/${id}`, payload)).data),
 
   deleteProduct: async (id: string): Promise<void> => {
     await apiClient.delete(`/admin/products/${id}`);
@@ -100,16 +107,8 @@ export const adminApi = {
 
   // Media
   uploadMedia: async (productId: string, formData: FormData): Promise<ProductMedia> => {
-    const res = await apiClient.post<ProductMedia | ProductMedia[]>(
-      `/admin/products/${productId}/media`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
-    );
-    return Array.isArray(res.data) ? res.data[0] : res.data;
+    const res = await apiClient.post<unknown | unknown[]>(`/admin/products/${productId}/media`, formData);
+    return normalizeMedia(Array.isArray(res.data) ? res.data[0] : res.data);
   },
 
   deleteMedia: async (productId: string, mediaId: string): Promise<void> => {
@@ -117,26 +116,19 @@ export const adminApi = {
   },
 
   // Banners
-  getBanners: async (): Promise<Banner[]> =>
-    (await apiClient.get<Banner[]>('/admin/banners')).data,
+  getBanners: async (): Promise<Banner[]> => {
+    const response = (await apiClient.get<PaginatedResponse<unknown> | unknown[]>('/admin/banners')).data;
+    const banners = Array.isArray(response)
+      ? response
+      : ((response as PaginatedResponse<unknown>)?.content ?? []);
+    return banners.map(normalizeBanner);
+  },
 
   createBanner: async (formData: FormData): Promise<Banner> =>
-    (
-      await apiClient.post<Banner>('/admin/banners', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-    ).data,
+    normalizeBanner((await apiClient.post<unknown>('/admin/banners', formData)).data),
 
   updateBanner: async (id: string, formData: FormData): Promise<Banner> =>
-    (
-      await apiClient.put<Banner>(`/admin/banners/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-    ).data,
+    normalizeBanner((await apiClient.put<unknown>(`/admin/banners/${id}`, formData)).data),
 
   deleteBanner: async (id: string): Promise<void> => {
     await apiClient.delete(`/admin/banners/${id}`);

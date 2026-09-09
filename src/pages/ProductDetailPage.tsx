@@ -1,4 +1,4 @@
-import { Instagram, ShieldCheck, ShoppingBag, Sparkles, Plus, Minus } from 'lucide-react';
+import { Instagram, ShieldCheck, ShoppingBag, Sparkles, Plus, Minus, MessageCircle, Truck } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { env } from '../app/config/env';
@@ -21,6 +21,7 @@ const ProductDetailPage = () => {
   const { addProduct } = useCart();
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState<'details' | 'care' | 'delivery'>('details');
 
   const { data: product, isLoading, error, refetch } = useProduct(slug ?? '');
   
@@ -71,15 +72,15 @@ const ProductDetailPage = () => {
       <div className="site-container py-10 sm:py-14">
         <Skeleton className="h-6 w-1/3 mb-8" />
         <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <Skeleton className="aspect-[4/5] w-full rounded-4xl" />
+          <Skeleton className="aspect-[4/5] w-full rounded-5xl" />
           <div className="self-center space-y-6">
             <Skeleton className="h-6 w-32 rounded-full" />
-            <Skeleton className="h-12 w-3/4 rounded" />
-            <Skeleton className="h-8 w-24 rounded" />
-            <Skeleton className="h-24 w-full rounded" />
+            <Skeleton className="h-12 w-3/4 rounded-2xl" />
+            <Skeleton className="h-8 w-24 rounded-full" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
             <div className="flex gap-4 pt-4">
-              <Skeleton className="h-12 w-32 rounded" />
-              <Skeleton className="h-12 w-40 rounded" />
+              <Skeleton className="h-12 w-32 rounded-full" />
+              <Skeleton className="h-12 w-40 rounded-full" />
             </div>
           </div>
         </div>
@@ -90,8 +91,8 @@ const ProductDetailPage = () => {
   if (!product) {
     return (
       <div className="site-container py-20 text-center">
-        <h1 className="font-display text-4xl text-ink">This piece could not be found</h1>
-        <p className="mt-4 text-muted">
+        <h1 className="font-display text-4xl font-bold text-ink">This piece could not be found</h1>
+        <p className="mt-4 text-muted font-sans">
           It may have moved or is no longer part of the current collection.
         </p>
         <Link className="button-primary mt-7 inline-flex" to="/products">
@@ -101,7 +102,6 @@ const ProductDetailPage = () => {
     );
   }
 
-  // Filter out the current product from related products and limit to maximum 4
   const relatedProducts = (relatedProductsResponse?.content ?? [])
     .filter((p) => p.id !== product.id && p.slug !== product.slug)
     .slice(0, 4);
@@ -122,46 +122,72 @@ const ProductDetailPage = () => {
             { label: product.name },
           ]}
         />
-        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <ProductGallery media={product.media ?? []} productName={product.name} />
+
+        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16 items-start">
+          {/* Gallery Column */}
+          <div className="sticky top-28">
+            <ProductGallery media={product.media ?? []} productName={product.name} />
+          </div>
           
-          <div className="self-center">
-            <AvailabilityBadge isAvailable={isAvailable} />
-            <div className="mt-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-maroon/70">
+          {/* Purchase Details Column */}
+          <div className="flex flex-col">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <AvailabilityBadge isAvailable={isAvailable} />
               {product.category?.name && (
-                <Link to={`/products?category=${product.category.slug}`} className="hover:underline">
+                <Link
+                  to={`/products?category=${product.category.slug}`}
+                  className="rounded-full bg-rose/40 px-3 py-0.5 text-[0.7rem] font-bold uppercase tracking-wider text-maroon hover:bg-rose/60 transition-colors font-sans"
+                >
                   {product.category.name}
                 </Link>
               )}
-              {productCode && <span className="text-muted/60">| CODE: {productCode}</span>}
+              {productCode && (
+                <span className="text-[0.7rem] font-mono text-muted/70 bg-surface px-2.5 py-0.5 rounded-full border border-beige/60">
+                  CODE: {productCode}
+                </span>
+              )}
             </div>
             
-            <h1 className="mt-2 font-display text-4xl leading-tight text-ink sm:text-5xl">
+            <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight text-ink sm:text-4xl lg:text-5xl">
               {product.name}
             </h1>
-            <ProductPrice className="mt-4 block text-2xl font-bold" price={product.price} />
-            <p className="mt-6 leading-8 text-muted">{product.description}</p>
+
+            <div className="mt-4 flex items-baseline gap-3">
+              <ProductPrice className="text-3xl font-black text-maroon font-sans" price={product.price} />
+              <span className="text-xs text-muted/80 font-sans">Inclusive of all taxes</span>
+            </div>
+
+            {product.shortDescription && (
+              <p className="mt-4 text-base leading-relaxed text-ink/85 font-sans font-medium">
+                {product.shortDescription}
+              </p>
+            )}
+
+            <p className="mt-2 leading-relaxed text-muted font-sans text-sm">
+              {product.description}
+            </p>
             
+            {/* Quantity Stepper */}
             {isAvailable && (
-              <div className="mt-8 flex items-center gap-4">
-                <span className="text-sm font-semibold text-ink">Quantity</span>
-                <div className="flex items-center rounded-full border border-beige bg-surface">
+              <div className="mt-7 flex items-center gap-4 p-4 rounded-3xl bg-surface border border-beige/80 shadow-2xs w-fit">
+                <span className="text-xs font-bold uppercase tracking-wider text-ink font-sans">Quantity</span>
+                <div className="flex items-center rounded-full border border-beige bg-canvas/60">
                   <button 
                     onClick={handleDecrease}
                     disabled={quantity <= 1}
-                    className="p-2 text-maroon hover:bg-rose/20 disabled:opacity-40 rounded-l-full"
+                    className="p-2 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-l-full transition-colors"
                     aria-label="Decrease quantity"
                     type="button"
                   >
                     <Minus className="size-4" />
                   </button>
-                  <span className="w-8 text-center text-sm font-bold text-ink" aria-label={`Selected quantity: ${quantity}`}>
+                  <span className="w-10 text-center text-sm font-extrabold text-ink font-sans" aria-label={`Selected quantity: ${quantity}`}>
                     {quantity}
                   </span>
                   <button 
                     onClick={handleIncrease}
                     disabled={quantity >= 20}
-                    className="p-2 text-maroon hover:bg-rose/20 disabled:opacity-40 rounded-r-full"
+                    className="p-2 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-r-full transition-colors"
                     aria-label="Increase quantity"
                     type="button"
                   >
@@ -171,9 +197,10 @@ const ProductDetailPage = () => {
               </div>
             )}
             
-            <div className="mt-8 flex flex-wrap gap-3">
+            {/* CTA Buttons */}
+            <div className="mt-7 flex flex-wrap items-center gap-3.5">
               <button
-                className="button-primary"
+                className="button-primary flex-1 min-w-[200px] shadow-md hover:shadow-lg"
                 disabled={!isAvailable}
                 onClick={() => {
                   if (addProduct(product, quantity)) {
@@ -183,8 +210,8 @@ const ProductDetailPage = () => {
                 }}
                 type="button"
               >
-                <ShoppingBag aria-hidden="true" className="size-4" />
-                {isAvailable ? 'Add to cart' : 'Currently unavailable'}
+                <ShoppingBag aria-hidden="true" className="size-4.5" />
+                <span>{isAvailable ? 'Add to cart' : 'Currently unavailable'}</span>
               </button>
               
               {hasSafeInstagram && (
@@ -194,29 +221,92 @@ const ProductDetailPage = () => {
                   rel="noreferrer noopener"
                   target="_blank"
                 >
-                  <Instagram aria-hidden="true" className="size-4" /> View on Instagram
+                  <Instagram aria-hidden="true" className="size-4.5" />
+                  <span>View on Instagram</span>
                 </a>
               )}
             </div>
-            
-            <ul className="mt-9 space-y-3 border-t border-beige pt-7 text-sm text-muted">
-              <li className="flex gap-3">
-                <Sparkles aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-gold" />{' '}
-                Handcrafted in a small batch
-              </li>
-              <li className="flex gap-3">
-                <ShieldCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-gold" />{' '}
-                Availability confirmed personally after ordering
-              </li>
-            </ul>
+
+            {/* Information Tabs */}
+            <div className="mt-10 border-t border-beige/80 pt-6">
+              <div className="flex gap-4 border-b border-beige/60 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('details')}
+                  className={`text-xs font-bold uppercase tracking-wider pb-2 transition-colors border-b-2 font-sans ${
+                    activeTab === 'details' ? 'border-maroon text-maroon' : 'border-transparent text-muted hover:text-ink'
+                  }`}
+                >
+                  Craft Details
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('care')}
+                  className={`text-xs font-bold uppercase tracking-wider pb-2 transition-colors border-b-2 font-sans ${
+                    activeTab === 'care' ? 'border-maroon text-maroon' : 'border-transparent text-muted hover:text-ink'
+                  }`}
+                >
+                  Care Guide
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('delivery')}
+                  className={`text-xs font-bold uppercase tracking-wider pb-2 transition-colors border-b-2 font-sans ${
+                    activeTab === 'delivery' ? 'border-maroon text-maroon' : 'border-transparent text-muted hover:text-ink'
+                  }`}
+                >
+                  Shipping & WhatsApp
+                </button>
+              </div>
+
+              <div className="mt-4 text-xs sm:text-sm text-muted leading-relaxed font-sans">
+                {activeTab === 'details' && (
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <Sparkles className="size-4 text-gold shrink-0" />
+                      Handmade in small batches in India.
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ShieldCheck className="size-4 text-maroon shrink-0" />
+                      Tested skin-safe materials & durable craftsmanship.
+                    </li>
+                  </ul>
+                )}
+                {activeTab === 'care' && (
+                  <p>
+                    Store in a dry pouch away from moisture and direct perfumes. Wipe gently with a soft dry cloth after wearing to maintain lustre.
+                  </p>
+                )}
+                {activeTab === 'delivery' && (
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <Truck className="size-4 text-maroon shrink-0" />
+                      Carefully packaged and dispatched across India within 2-4 business days.
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <MessageCircle className="size-4 text-[#25D366] shrink-0" />
+                      Direct WhatsApp order confirmation with real-time updates.
+                    </li>
+                  </ul>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {relatedProducts.length > 0 && (
-        <section className="section-space bg-rose/5 mt-10">
+        <section className="section-space bg-rose/20 mt-12 border-t border-beige/60">
           <div className="site-container">
-            <h2 className="mb-8 font-display text-3xl text-ink">You may also like</h2>
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-maroon font-sans">Curated For You</p>
+                <h2 className="mt-1 font-display text-3xl font-bold text-ink sm:text-4xl">You may also like</h2>
+              </div>
+              <Link to="/products" className="text-xs font-bold text-maroon hover:underline font-sans hidden sm:block">
+                View All Creations →
+              </Link>
+            </div>
             <ProductGrid products={relatedProducts} />
           </div>
         </section>
@@ -226,4 +316,3 @@ const ProductDetailPage = () => {
 };
 
 export default ProductDetailPage;
-
