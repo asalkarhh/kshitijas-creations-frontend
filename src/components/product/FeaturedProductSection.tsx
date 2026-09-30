@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../../types';
 import { SectionHeading } from '../common/SectionHeading';
@@ -18,16 +19,22 @@ export const FeaturedProductSection = ({
 }: FeaturedProductSectionProps) => (
   <section className="section-space">
     <div className="site-container">
-      <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+      <div className="mb-8">
         <SectionHeading description={description} eyebrow={eyebrow} title={title} />
+      </div>
+
+      <ProductGrid products={products} />
+
+      {/* Centered View More button below product grid */}
+      <div className="mt-10 flex justify-center">
         <Link
-          className="text-sm font-bold text-maroon underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-2.5 rounded-full border border-beige/90 bg-surface px-7 py-3 text-sm font-bold text-maroon shadow-xs transition-all hover:bg-rose/30 hover:border-gold hover:shadow-md"
           to="/products"
         >
-          View all products
+          <span>View More</span>
+          <ArrowRight aria-hidden="true" className="size-4 text-maroon" />
         </Link>
       </div>
-      <ProductGrid products={products} />
     </div>
   </section>
 );

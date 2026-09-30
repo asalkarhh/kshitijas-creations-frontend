@@ -115,6 +115,10 @@ export const adminApi = {
     await apiClient.delete(`/admin/products/${productId}/media/${mediaId}`);
   },
 
+  setPrimaryMedia: async (productId: string, mediaId: string): Promise<void> => {
+    await apiClient.post(`/admin/products/${productId}/media/${mediaId}/primary`);
+  },
+
   // Banners
   getBanners: async (): Promise<Banner[]> => {
     const response = (await apiClient.get<PaginatedResponse<unknown> | unknown[]>('/admin/banners')).data;

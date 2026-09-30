@@ -24,6 +24,8 @@ import { useBanners } from '../hooks/use-banners';
 import { useCategories } from '../hooks/use-categories';
 import { useProducts } from '../hooks/use-products';
 import { Skeleton } from '../components/common/Skeleton';
+import kshitijaCreationImg from '../assets/kshitija creation.jpg';
+import type { Product } from '../types';
 
 const orderingSteps = [
   { icon: Sparkles, label: 'Browse Collections', detail: 'Discover unique handcrafted pieces made in tiny batches.' },
@@ -53,12 +55,53 @@ const HomePage = () => {
   const { data: banners, isLoading: loadingBanners } = useBanners();
   const { data: categories, isLoading: loadingCategories, error: categoriesError, refetch: refetchCategories } = useCategories();
   
-  const { data: featuredResponse, isLoading: loadingFeatured } = useProducts({ featured: true, page: 0, size: 8 });
-  const { data: newResponse, isLoading: loadingNew } = useProducts({ sort: 'newest', page: 0, size: 8 });
+  const { data: featuredResponse, isLoading: loadingFeatured } = useProducts({ featured: true, page: 0, size: 30 });
+  const { data: newResponse, isLoading: loadingNew } = useProducts({ sort: 'newest', page: 0, size: 30 });
+
+  
+  const getCategoryDiverseProducts = (productsList: Product[], limit = 4) => {
+    const seenCategoryIds = new Set<string>();
+    const result: Product[] = [];
+    const remaining: Product[] = [];
+
+    for (const prod of productsList) {
+      const catId = prod.category?.id || prod.categoryId || prod.category?.slug || 'uncategorized';
+      if (!seenCategoryIds.has(catId)) {
+        seenCategoryIds.add(catId);
+        result.push(prod);
+      } else {
+        remaining.push(prod);
+      }
+      if (result.length >= limit) break;
+    }
+
+    while (result.length < limit && remaining.length > 0) {
+      result.push(remaining.shift()!);
+    }
+
+    return result;
+  };
+
+  const featuredProducts = getCategoryDiverseProducts(featuredResponse?.content ?? [], 4);
+  const newProducts = getCategoryDiverseProducts(newResponse?.content ?? [], 4);
 
   const activeCategories = (categories ?? [])
     .filter((c) => (c.isActive !== false && c.active !== false))
     .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+  const categoryImageBySlug = [...(newResponse?.content ?? []), ...(featuredResponse?.content ?? [])].reduce<Record<string, string>>(
+    (images, product) => {
+      const primaryImage = (product as Product & { primaryImage?: { url?: string; mediaType?: string } }).primaryImage;
+      const image = primaryImage?.url && primaryImage.mediaType !== 'VIDEO'
+        ? primaryImage
+        : product.media?.find((media) => media.isPrimary && media.mediaType !== 'VIDEO')
+          ?? product.media?.find((media) => media.mediaType !== 'VIDEO');
+      if (image?.url && product.category?.slug && !images[product.category.slug]) {
+        images[product.category.slug] = image.url;
+      }
+      return images;
+    },
+  {});
 
   return (
     <>
@@ -92,23 +135,28 @@ const HomePage = () => {
         <div className="site-container">
           <SectionHeading
             align="center"
-            description="Every collection begins at the worktable and is finished slowly, one detail at a time."
+            description="Start with the craft, style, or piece you are looking for."
             eyebrow="Curated for You"
-            title="Shop by collection"
+            title="Shop by category"
           />
           {categoriesError ? (
             <div className="mt-9">
               <ErrorMessage message="Could not load categories" onRetry={refetchCategories} />
             </div>
           ) : (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
               {loadingCategories ? (
-                Array.from({ length: 3 }).map((_, i) => <CategorySkeleton key={i} />)
+                Array.from({ length: 5 }).map((_, i) => <CategorySkeleton key={i} />)
               ) : activeCategories.length === 0 ? (
                 <div className="col-span-full py-12 text-center text-muted">No collections currently available.</div>
               ) : (
                 activeCategories.map((category, index) => (
-                  <CategoryCard category={category} index={index} key={category.id} />
+                  <CategoryCard
+                    category={category}
+                    imageUrl={categoryImageBySlug[category.slug]}
+                    index={index}
+                    key={category.id}
+                  />
                 ))
               )}
             </div>
@@ -128,11 +176,11 @@ const HomePage = () => {
              </div>
           </div>
         </section>
-      ) : featuredResponse && featuredResponse.content.length > 0 ? (
+      ) : featuredProducts && featuredProducts.length > 0 ? (
         <FeaturedProductSection
           description="Small details, warm colours, and the pieces our customers reach for most."
           eyebrow="Customer Favourites"
-          products={featuredResponse.content}
+          products={featuredProducts}
           title="Handmade, and much loved"
         />
       ) : null}
@@ -149,11 +197,11 @@ const HomePage = () => {
              </div>
           </div>
         </section>
-      ) : newResponse && newResponse.content.length > 0 ? (
+      ) : newProducts && newProducts.length > 0 ? (
         <FeaturedProductSection
           description="New ideas are added in tiny batches—once they are gone, they may not return exactly the same."
           eyebrow="Just Arrived"
-          products={newResponse.content}
+          products={newProducts}
           title="Fresh from the worktable"
         />
       ) : null}
@@ -191,10 +239,19 @@ const HomePage = () => {
               </Link>
             </div>
           </div>
-          <div className="grid min-h-72 place-items-center bg-[radial-gradient(circle_at_30%_20%,rgba(233,192,196,0.35),transparent_40%),radial-gradient(circle_at_70%_75%,rgba(201,164,91,0.3),transparent_45%)] p-10">
-            <div className="relative grid size-52 place-items-center rounded-full border border-white/25 bg-white/5 backdrop-blur-md sm:size-64 shadow-glow">
-              <div className="absolute inset-4 rounded-full border border-white/15" />
-              <Instagram aria-hidden="true" className="size-20 text-rose" strokeWidth={1.2} />
+          <div className="grid min-h-72 place-items-center bg-[radial-gradient(circle_at_30%_20%,rgba(233,192,196,0.35),transparent_40%),radial-gradient(circle_at_70%_75%,rgba(201,164,91,0.3),transparent_45%)] p-6 sm:p-10">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute -inset-3 rounded-full border border-white/20 bg-white/5 blur-xs" />
+              <div className="relative size-60 sm:size-72 overflow-hidden rounded-full border-4 border-white/40 bg-surface shadow-glow group">
+                <img
+                  alt="Kshitija Creations logo"
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src={kshitijaCreationImg}
+                />
+              </div>
+              <div className="absolute bottom-2 right-2 grid size-12 place-items-center rounded-full bg-white text-maroon shadow-lg border-2 border-beige">
+                <Instagram aria-hidden="true" className="size-6 text-maroon" />
+              </div>
             </div>
           </div>
         </div>

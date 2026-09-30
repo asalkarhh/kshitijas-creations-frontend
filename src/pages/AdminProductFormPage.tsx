@@ -54,7 +54,10 @@ const AdminProductFormPage = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [deletingMedia, setDeletingMedia] = useState<ProductMedia | null>(null);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [settingPrimaryMedia, setSettingPrimaryMedia] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
 
   // Categories list for dropdown
   const { data: categories = [] } = useQuery({
@@ -128,10 +131,25 @@ const AdminProductFormPage = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isDirty, pendingUploads.length]);
 
-  // File selection and validation
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Prevent browser default drop behavior (which opens images in new tabs) across the page
+  useEffect(() => {
+    const preventDefaults = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    window.addEventListener('dragover', preventDefaults);
+    window.addEventListener('drop', preventDefaults);
+
+    return () => {
+      window.removeEventListener('dragover', preventDefaults);
+      window.removeEventListener('drop', preventDefaults);
+    };
+  }, []);
+
+  // File selection, drag & drop, and validation
+  const processFiles = (files: FileList | File[]) => {
     setFileError(null);
-    const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const newUploads: PendingUpload[] = [];
@@ -176,6 +194,50 @@ const AdminProductFormPage = () => {
 
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      processFiles(e.target.files);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current += 1;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'copy';
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current -= 1;
+    if (dragCounter.current <= 0) {
+      dragCounter.current = 0;
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounter.current = 0;
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
     }
   };
 
@@ -261,8 +323,8 @@ const AdminProductFormPage = () => {
         queryClient.invalidateQueries({ queryKey: ['admin', 'product', targetProductId] });
       }
 
-      if (!isEditing && targetProductId) {
-        navigate(`/admin/products/${targetProductId}/edit`, { replace: true });
+      if (targetProductId) {
+        navigate('/admin/products', { replace: true });
       }
     } catch (err) {
       const error = err as unknown as ApiError;
@@ -299,6 +361,20 @@ const AdminProductFormPage = () => {
       setDeletingMedia(null);
     },
   });
+
+  const setPrimaryMedia = async (media: ProductMedia) => {
+    if (!id || media.isPrimary) return;
+    setSettingPrimaryMedia(media.id);
+    try {
+      await adminApi.setPrimaryMedia(id, media.id);
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'product', id] });
+      showToast('Primary product image updated.', 'success');
+    } catch (err) {
+      showToast((err as ApiError).message || 'Could not update the primary image.', 'error');
+    } finally {
+      setSettingPrimaryMedia(null);
+    }
+  };
 
   if (isEditing && isProductLoading) {
     return (
@@ -596,7 +672,17 @@ const AdminProductFormPage = () => {
               </div>
 
               {/* Upload Drop/Button Area */}
-              <div className="rounded-2xl border-2 border-dashed border-beige p-5 text-center hover:border-maroon/40 transition-colors">
+              <div
+                className={`rounded-2xl border-2 border-dashed p-5 text-center transition-colors ${
+                  isDragging
+                    ? 'border-maroon bg-maroon/5 ring-2 ring-maroon/20'
+                    : 'border-beige hover:border-maroon/40'
+                }`}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
                 <input
                   accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
                   className="sr-only"
@@ -675,6 +761,15 @@ const AdminProductFormPage = () => {
                         </div>
 
                         <button
+                          className="text-[0.68rem] font-semibold text-maroon hover:underline disabled:opacity-50"
+                          disabled={media.isPrimary || settingPrimaryMedia === media.id}
+                          onClick={() => setPrimaryMedia(media)}
+                          type="button"
+                        >
+                          {media.isPrimary ? 'Primary' : 'Make primary'}
+                        </button>
+
+                        <button
                           aria-label={`Remove media asset ${media.altText || media.id}`}
                           className="grid size-8 place-items-center rounded-full text-muted hover:bg-rose/20 hover:text-rose-600"
                           onClick={() => setDeletingMedia(media)}
@@ -742,6 +837,22 @@ const AdminProductFormPage = () => {
                             type="text"
                             value={upload.altText}
                           />
+                          <label className="flex items-center gap-1.5 text-[0.68rem] font-semibold text-maroon">
+                            <input
+                              checked={upload.isPrimary}
+                              name="pending-primary-media"
+                              onChange={() => {
+                                setPendingUploads((current) =>
+                                  current.map((item, itemIndex) => ({
+                                    ...item,
+                                    isPrimary: itemIndex === index,
+                                  })),
+                                );
+                              }}
+                              type="radio"
+                            />
+                            Use as primary
+                          </label>
                         </div>
 
                         <button

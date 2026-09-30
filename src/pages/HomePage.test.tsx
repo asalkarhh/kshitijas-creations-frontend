@@ -69,7 +69,7 @@ describe('HomePage', () => {
     );
 
     renderWithProviders(<HomePage />);
-    await screen.findByRole('heading', { name: 'Shop by collection' });
+    await screen.findByRole('heading', { name: 'Shop by category' });
     expect(screen.queryByRole('region', { name: 'Featured collections' })).toBeNull();
   });
 });

@@ -1,4 +1,4 @@
-import { Instagram, ShoppingBag } from 'lucide-react';
+import { Instagram, ShoppingBag, User } from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
 import { env } from '../../app/config/env';
 import { useCart } from '../../store/cart-context';
@@ -57,6 +57,15 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
               )}
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              className={`${mobileLinkClass} flex items-center gap-3`}
+              onClick={onClose}
+              to="/admin/login"
+            >
+              <User aria-hidden="true" className="size-5" /> Admin
+            </NavLink>
+          </li>
         </ul>
       </nav>
       <p className="mt-10 border-t border-beige pt-6 text-sm leading-6 text-muted">
@@ -65,3 +74,4 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
     </Modal>
   );
 };
+

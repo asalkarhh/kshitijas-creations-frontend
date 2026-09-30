@@ -4,7 +4,6 @@ import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductSkeleton } from '../components/product/ProductSkeleton';
 import { ErrorMessage } from '../components/common/ErrorMessage';
-import { Pagination } from '../components/common/Pagination';
 import { usePageMetadata } from '../hooks/use-page-metadata';
 import { useProducts } from '../hooks/use-products';
 import { useCategories } from '../hooks/use-categories';
@@ -58,7 +57,7 @@ const ProductsPage = () => {
   const { data: productsData, isLoading, error, refetch } = useProducts({
     category: category || undefined,
     page,
-    size: 12,
+    size: 100,
     sort: sort || undefined,
     search: search || undefined,
   });
@@ -333,23 +332,7 @@ const ProductsPage = () => {
               {Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)}
             </div>
           ) : (
-            <>
-              <ProductGrid products={productsData?.content || []} />
-              {productsData && productsData.totalPages > 1 && (
-                <div className="mt-14 flex justify-center">
-                  <Pagination 
-                    currentPage={page} 
-                    totalPages={productsData.totalPages} 
-                    onPageChange={(newPage) => {
-                      const next = new URLSearchParams(searchParams);
-                      next.set('page', newPage.toString());
-                      setSearchParams(next);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }} 
-                  />
-                </div>
-              )}
-            </>
+            <ProductGrid products={productsData?.content || []} />
           )}
         </>
       )}

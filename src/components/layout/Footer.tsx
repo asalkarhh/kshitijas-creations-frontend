@@ -126,11 +126,22 @@ export const Footer = () => (
         </ul>
       </div>
     </div>
-    <div className="border-t border-beige/70 py-6 text-center text-xs text-muted font-sans">
-      <div className="site-container flex flex-col items-center justify-between gap-2 sm:flex-row">
+    <div className="border-t border-beige/70 py-6 text-xs text-muted font-sans">
+      <div className="site-container flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
         <p>© {new Date().getFullYear()} Kshitija’s Creations. Handcrafted in India.</p>
-        <p className="flex items-center gap-1 text-[0.7rem]">
+        <p className="flex items-center justify-center gap-1 text-xs font-medium sm:text-center">
           Made with <Heart className="size-3 fill-maroon text-maroon inline" /> for thoughtful gifting
+        </p>
+        <p className="text-xs">
+          Developed by{' '}
+          <a
+            className="font-bold text-maroon hover:underline"
+            href="https://asalkar.in"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Asalkar Techworks
+          </a>
         </p>
       </div>
     </div>

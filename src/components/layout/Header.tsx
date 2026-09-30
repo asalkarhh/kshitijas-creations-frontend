@@ -1,4 +1,4 @@
-import { Instagram, Menu, ShoppingBag } from 'lucide-react';
+import { Instagram, Menu, ShoppingBag, User } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { env } from '../../app/config/env';
@@ -36,14 +36,17 @@ export const Header = () => {
           >
             Categories
           </Link>
-          <a
+          {/* <a
             className="px-3.5 py-2 text-sm font-semibold tracking-wide text-ink/80 transition-all duration-200 hover:bg-rose/30 hover:text-maroon rounded-full inline-flex items-center gap-1.5"
             href={env.instagramUrl}
             rel="noreferrer"
             target="_blank"
           >
             <span>Instagram</span>
-          </a>
+          </a> */}
+          {/* <NavLink className={navClass} to="/admin/login">
+            Admin
+          </NavLink> */}
         </nav>
         <div className="flex items-center gap-2 sm:gap-3">
           <a
@@ -55,6 +58,14 @@ export const Header = () => {
           >
             <Instagram aria-hidden="true" className="size-4.5 text-maroon" />
           </a>
+          <Link
+            aria-label="Admin Portal"
+            className="header-icon-button border border-beige/60 bg-surface/80 shadow-xs hover:border-maroon/40"
+            title="Admin Login"
+            to="/admin/login"
+          >
+            <User aria-hidden="true" className="size-4.5 text-maroon" />
+          </Link>
           <Link
             aria-label={`Cart with ${itemCount} items`}
             className="header-icon-button relative border border-beige/60 bg-surface/80 shadow-xs hover:border-maroon/40"
@@ -82,3 +93,4 @@ export const Header = () => {
     </header>
   );
 };
+
