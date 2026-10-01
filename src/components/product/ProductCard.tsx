@@ -19,6 +19,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (addProduct(product)) {
       showToast(`${product.name} added to your bag.`);
     }
@@ -27,14 +28,21 @@ export const ProductCard = ({ product }: { product: Product }) => {
   return (
     <article className="group relative flex flex-col justify-between rounded-4xl border border-beige/60 bg-surface/90 p-3.5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-card">
       <div>
-        {/* Product Image Box */}
+        {/* Product Image Box - Image is a Clickable Link to Product Details */}
         <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-beige/40">
-          <ProductMedia
-            alt={image?.altText || product.name}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
-            src={image?.url}
-          />
-          <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <Link
+            aria-label={`View full details for ${product.name}`}
+            className="block size-full"
+            to={`/products/${product.slug}`}
+          >
+            <ProductMedia
+              alt={image?.altText || product.name}
+              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+              src={image?.url}
+            />
+          </Link>
+
+          <div className="absolute left-3 top-3 flex flex-wrap gap-1.5 z-10 pointer-events-none">
             {isNew && (
               <span className="rounded-full bg-white/95 px-2.5 py-0.5 text-[0.65rem] font-extrabold uppercase tracking-wider text-maroon shadow-xs backdrop-blur-xs">
                 New
@@ -46,10 +54,11 @@ export const ProductCard = ({ product }: { product: Product }) => {
               </span>
             )}
           </div>
+
           {hasInstagram && (
             <a
               aria-label={`View ${product.name} on Instagram`}
-              className="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-white/80 backdrop-blur-md text-maroon shadow-xs transition-all hover:scale-110 hover:bg-white"
+              className="absolute right-3 top-3 z-10 grid size-8 place-items-center rounded-full bg-white/80 backdrop-blur-md text-maroon shadow-xs transition-all hover:scale-110 hover:bg-white"
               href={product.instagramUrl}
               rel="noreferrer noopener"
               target="_blank"

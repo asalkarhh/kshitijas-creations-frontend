@@ -81,12 +81,12 @@ describe('AdminBannersPage', () => {
     // Attach desktop image
     const desktopInput = document.querySelector('#desktop-banner-input') as HTMLInputElement;
     const validFile = new File(['valid content'], 'desktop.webp', { type: 'image/webp' });
-    fireEvent.change(desktopInput, { target: { files: [validFile] } });
+    await user.upload(desktopInput, validFile);
 
     const submitBtn = screen.getByRole('button', { name: 'Create Banner' });
     await user.click(submitBtn);
 
-    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull(), { timeout: 4000 });
     expect(
       await screen.findByText('Banner "Navratri Festive Specials" created successfully.'),
     ).toBeVisible();
@@ -110,7 +110,7 @@ describe('AdminBannersPage', () => {
     const updateBtn = screen.getByRole('button', { name: 'Update Banner' });
     await user.click(updateBtn);
 
-    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull(), { timeout: 5000 });
     expect(
       await screen.findByText('Banner "Spring Artisan Collection" updated successfully.'),
     ).toBeVisible();

@@ -8,6 +8,7 @@ const PublicLayout = lazy(() => import('../layouts/PublicLayout'));
 const AdminLayout = lazy(() => import('../layouts/AdminLayout'));
 const HomePage = lazy(() => import('../pages/HomePage'));
 const ProductsPage = lazy(() => import('../pages/ProductsPage'));
+const CategoriesPage = lazy(() => import('../pages/CategoriesPage'));
 const ProductDetailPage = lazy(() => import('../pages/ProductDetailPage'));
 const CartPage = lazy(() => import('../pages/CartPage'));
 const CheckoutPage = lazy(() => import('../pages/CheckoutPage'));
@@ -31,6 +32,7 @@ export const AppRoutes = () => (
       <Route element={<PublicLayout />} path="/">
         <Route element={<HomePage />} index />
         <Route element={<ProductsPage />} path="products" />
+        <Route element={<CategoriesPage />} path="categories" />
         <Route element={<ProductDetailPage />} path="products/:slug" />
         <Route element={<CartPage />} path="cart" />
         <Route element={<CheckoutPage />} path="checkout" />
@@ -68,6 +70,9 @@ export const AppRoutes = () => (
         <Route element={<AdminOrdersPage />} path="orders" />
         <Route element={<AdminOrderDetailsPage />} path="orders/:id" />
       </Route>
+
+      {/* Fallback 404 Route */}
+      <Route element={<NotFoundPage />} path="*" />
     </Routes>
   </Suspense>
 );

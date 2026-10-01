@@ -10,7 +10,7 @@ describe('Header', () => {
     expect(navigation).toHaveTextContent('Home');
     expect(navigation).toHaveTextContent('Products');
     expect(navigation).toHaveTextContent('Categories');
-    expect(navigation).toHaveTextContent('Instagram');
+    expect(screen.getByRole('link', { name: /Visit Kshitija's Creations on Instagram/i })).toBeInTheDocument();
   });
 
   it('opens and closes the mobile navigation', async () => {

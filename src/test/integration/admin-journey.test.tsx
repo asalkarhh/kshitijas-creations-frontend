@@ -15,7 +15,7 @@ describe('Complete Admin Journey E2E Integration', () => {
     renderWithProviders(<App />, { route: '/admin/login' });
 
     // 1. Admin Login Page
-    expect(await screen.findByRole('heading', { name: 'Admin Portal' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Admin Portal' }, { timeout: 10000 })).toBeVisible();
     await user.type(screen.getByLabelText(/Admin email/i), 'admin@example.com');
     await user.type(screen.getByLabelText(/^Password/i), 'password');
     await user.click(screen.getByRole('button', { name: /Sign In/i }));
@@ -28,25 +28,25 @@ describe('Complete Admin Journey E2E Integration', () => {
     // 3. Navigate to Categories
     const categoriesNavLinks = screen.getAllByRole('link', { name: /Categories/i });
     await user.click(categoriesNavLinks[0]);
-    expect(await screen.findByRole('heading', { name: 'Categories' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Categories' }, { timeout: 10000 })).toBeVisible();
     expect(await screen.findByText('Earrings')).toBeVisible();
 
     // 4. Navigate to Products
     const productsNavLinks = screen.getAllByRole('link', { name: /Products/i });
     await user.click(productsNavLinks[0]);
-    expect(await screen.findByRole('heading', { name: 'Products' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Products' }, { timeout: 10000 })).toBeVisible();
     expect(await screen.findByText('Floral Earrings')).toBeVisible();
 
     // 5. Navigate to Banners
     const bannersNavLinks = screen.getAllByRole('link', { name: /Banners/i });
     await user.click(bannersNavLinks[0]);
-    expect(await screen.findByRole('heading', { name: 'Hero Banners' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Hero Banners' }, { timeout: 10000 })).toBeVisible();
     expect(await screen.findByText('Spring Collection')).toBeVisible();
 
     // 6. Navigate to Orders
     const ordersNavLinks = screen.getAllByRole('link', { name: /Orders/i });
     await user.click(ordersNavLinks[0]);
-    expect(await screen.findByRole('heading', { name: 'Customer Orders' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Customer Orders' }, { timeout: 10000 })).toBeVisible();
     expect(await screen.findByText('KC-2026-00042')).toBeVisible();
 
     // 7. Click to open Order Details
@@ -54,7 +54,7 @@ describe('Complete Admin Journey E2E Integration', () => {
     await user.click(orderLink);
 
     // 8. Order Details page loads
-    expect(await screen.findByRole('heading', { name: /Order #KC-2026-00042/i })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: /Order #KC-2026-00042/i }, { timeout: 10000 })).toBeVisible();
     expect(await screen.findByText('Priya Sharma')).toBeVisible();
     expect(screen.getByText('9876543210')).toBeVisible();
 

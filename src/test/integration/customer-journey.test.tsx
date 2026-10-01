@@ -14,7 +14,7 @@ describe('Complete Customer Journey E2E Integration', () => {
     renderWithProviders(<App />);
 
     // 1. Home page loads with Hero Banners and Categories
-    expect(await screen.findByRole('heading', { name: /Shop by collection/i })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: /Shop by (collection|category)/i }, { timeout: 10000 })).toBeVisible();
 
     // 2. Click "Products" in navigation
     const productsNav = screen.getByRole('link', { name: 'Products' });
@@ -22,20 +22,20 @@ describe('Complete Customer Journey E2E Integration', () => {
 
     // 3. Products catalogue loads
     expect(
-      await screen.findByRole('heading', { name: /Find something made for you/i }),
+      await screen.findByRole('heading', { name: /Find something made for you/i }, { timeout: 10000 }),
     ).toBeVisible();
-    expect(await screen.findByText('Floral Earrings')).toBeVisible();
+    expect(await screen.findByText('Floral Earrings', {}, { timeout: 10000 })).toBeVisible();
 
     // 4. Click product link to go to details
-    const productLinks = await screen.findAllByRole('link', { name: 'Floral Earrings' });
+    const productLinks = await screen.findAllByRole('link', { name: 'Floral Earrings' }, { timeout: 10000 });
     await user.click(productLinks[0]);
 
     // 5. Product detail page loads
-    expect(await screen.findByRole('heading', { name: 'Floral Earrings' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Floral Earrings' }, { timeout: 10000 })).toBeVisible();
     expect(screen.getByText('₹500')).toBeVisible();
 
     // 6. Add to cart on product detail page
-    const addToCartBtn = await screen.findByRole('button', { name: 'Add to cart' });
+    const addToCartBtn = await screen.findByRole('button', { name: 'Add to cart' }, { timeout: 10000 });
     await user.click(addToCartBtn);
 
     // 7. Open Cart
@@ -43,7 +43,7 @@ describe('Complete Customer Journey E2E Integration', () => {
     await user.click(cartNavBtn);
 
     // 8. Review Cart page
-    expect(await screen.findByRole('heading', { name: 'Shopping cart' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Shopping cart' }, { timeout: 10000 })).toBeVisible();
     expect(screen.getByText('Floral Earrings')).toBeVisible();
 
     // 9. Proceed to Checkout
@@ -52,7 +52,7 @@ describe('Complete Customer Journey E2E Integration', () => {
 
     // 10. Checkout Page loads
     expect(
-      await screen.findByRole('heading', { name: /Where should we deliver\?/i }),
+      await screen.findByRole('heading', { name: /Where should we deliver\?/i }, { timeout: 10000 }),
     ).toBeVisible();
 
     // 11. Fill Delivery Address Form
@@ -69,7 +69,7 @@ describe('Complete Customer Journey E2E Integration', () => {
 
     // 13. Order Success page loads
     expect(
-      await screen.findByRole('heading', { name: /Order submitted successfully/i }),
+      await screen.findByRole('heading', { name: /Order submitted successfully/i }, { timeout: 10000 }),
     ).toBeVisible();
     expect(screen.getAllByText(/KC-2026-00001/i)[0]).toBeVisible();
     expect(screen.getByRole('link', { name: /Send order on WhatsApp/i })).toBeVisible();

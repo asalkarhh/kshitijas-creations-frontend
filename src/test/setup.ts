@@ -1,3 +1,34 @@
+
+// Polyfill Blob.prototype.arrayBuffer & stream for jsdom + Axios FormData serialization
+if (typeof Blob !== 'undefined') {
+  if (!Blob.prototype.arrayBuffer) {
+    Blob.prototype.arrayBuffer = async function () {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as ArrayBuffer);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(this);
+      });
+    };
+  }
+  if (!Blob.prototype.stream) {
+    Blob.prototype.stream = function () {
+      const blob = this;
+      return new ReadableStream({
+        async start(controller) {
+          try {
+            const buf = await blob.arrayBuffer();
+            controller.enqueue(new Uint8Array(buf));
+            controller.close();
+          } catch (err) {
+            controller.error(err);
+          }
+        },
+      });
+    };
+  }
+}
+
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, afterAll, vi } from 'vitest';

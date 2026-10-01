@@ -29,9 +29,9 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
             </NavLink>
           </li>
           <li>
-            <Link className={mobileLinkClass} onClick={onClose} to="/#categories">
+            <NavLink className={mobileLinkClass} onClick={onClose} to="/categories">
               Categories
-            </Link>
+            </NavLink>
           </li>
           <li>
             <a

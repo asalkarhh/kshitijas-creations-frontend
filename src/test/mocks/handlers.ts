@@ -597,6 +597,7 @@ export const handlers = [
       isActive: true,
       createdAt: new Date().toISOString(),
     };
+    mockApiBanners.unshift(newBanner);
     return HttpResponse.json(newBanner, { status: 201 });
   }),
 

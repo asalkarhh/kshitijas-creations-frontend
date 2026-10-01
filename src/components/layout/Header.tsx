@@ -30,12 +30,9 @@ export const Header = () => {
           <NavLink className={navClass} to="/products">
             Products
           </NavLink>
-          <Link
-            className="px-3.5 py-2 text-sm font-semibold tracking-wide text-ink/80 transition-all duration-200 hover:bg-rose/30 hover:text-maroon rounded-full"
-            to="/#categories"
-          >
+          <NavLink className={navClass} to="/categories">
             Categories
-          </Link>
+          </NavLink>
           {/* <a
             className="px-3.5 py-2 text-sm font-semibold tracking-wide text-ink/80 transition-all duration-200 hover:bg-rose/30 hover:text-maroon rounded-full inline-flex items-center gap-1.5"
             href={env.instagramUrl}
