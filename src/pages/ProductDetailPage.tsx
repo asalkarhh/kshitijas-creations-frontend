@@ -1,5 +1,5 @@
-import { Instagram, ShieldCheck, ShoppingBag, Sparkles, Plus, Minus, MessageCircle, Truck } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Instagram, ShieldCheck, ShoppingBag, Sparkles, Plus, Minus, MessageCircle, Truck, Zap } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { env } from '../app/config/env';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
@@ -18,6 +18,7 @@ import { isSafeUrl } from '../utils/url';
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { addProduct } = useCart();
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
@@ -34,6 +35,13 @@ const ProductDetailPage = () => {
   const productCode = product?.productCode ?? (product?.id ? product.id.replace(/^prod-/, '').toUpperCase() : '');
   const instagramUrl = product?.instagramUrl || env.instagramUrl;
   const hasSafeInstagram = Boolean(instagramUrl && isSafeUrl(instagramUrl));
+
+  const handleBuyNow = () => {
+    if (!product || !isAvailable) return;
+    if (addProduct(product, quantity)) {
+      navigate('/checkout');
+    }
+  };
 
   usePageMetadata({
     title: product?.name ?? 'Product details',
@@ -167,40 +175,65 @@ const ProductDetailPage = () => {
               {product.description}
             </p>
             
-            {/* Quantity Stepper */}
-            {isAvailable && (
-              <div className="mt-7 flex items-center gap-4 p-4 rounded-3xl bg-surface border border-beige/80 shadow-2xs w-fit">
-                <span className="text-xs font-bold uppercase tracking-wider text-ink font-sans">Quantity</span>
-                <div className="flex items-center rounded-full border border-beige bg-canvas/60">
-                  <button 
-                    onClick={handleDecrease}
-                    disabled={quantity <= 1}
-                    className="p-2 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-l-full transition-colors"
-                    aria-label="Decrease quantity"
-                    type="button"
-                  >
-                    <Minus className="size-4" />
-                  </button>
-                  <span className="w-10 text-center text-sm font-extrabold text-ink font-sans" aria-label={`Selected quantity: ${quantity}`}>
-                    {quantity}
-                  </span>
-                  <button 
-                    onClick={handleIncrease}
-                    disabled={quantity >= 20}
-                    className="p-2 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-r-full transition-colors"
-                    aria-label="Increase quantity"
-                    type="button"
-                  >
-                    <Plus className="size-4" />
-                  </button>
+            {/* Quantity Stepper & Instagram Row */}
+            <div className="mt-7 flex flex-wrap items-center gap-4">
+              {isAvailable && (
+                <div className="flex h-16 items-center gap-4 rounded-3xl border border-beige/80 bg-surface px-4 shadow-2xs">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink font-sans">Quantity</span>
+                  <div className="flex h-10 items-center rounded-full border border-beige bg-canvas/60">
+                    <button 
+                      onClick={handleDecrease}
+                      disabled={quantity <= 1}
+                      className="flex h-full items-center px-3 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-l-full transition-colors"
+                      aria-label="Decrease quantity"
+                      type="button"
+                    >
+                      <Minus className="size-4" />
+                    </button>
+                    <span className="w-10 text-center text-sm font-extrabold text-ink font-sans" aria-label={`Selected quantity: ${quantity}`}>
+                      {quantity}
+                    </span>
+                    <button 
+                      onClick={handleIncrease}
+                      disabled={quantity >= 20}
+                      className="flex h-full items-center px-3 text-maroon hover:bg-rose/30 disabled:opacity-30 rounded-r-full transition-colors"
+                      aria-label="Increase quantity"
+                      type="button"
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {hasSafeInstagram && (
+                <a
+                  className="flex h-16 items-center gap-3 rounded-3xl border border-beige/80 bg-surface px-5 shadow-2xs transition-all hover:border-maroon/40 hover:bg-rose/20 font-sans text-xs font-bold text-maroon sm:text-sm"
+                  href={instagramUrl}
+                  rel="noreferrer noopener"
+                  target="_blank"
+                >
+                  <Instagram aria-hidden="true" className="size-5 shrink-0" />
+                  <span>View on Instagram</span>
+                </a>
+              )}
+            </div>
             
-            {/* CTA Buttons */}
-            <div className="mt-7 flex flex-wrap items-center gap-3.5">
+            {/* CTA Buttons: Buy Now & Add to cart */}
+            <div className="mt-5 flex flex-wrap items-center gap-3.5">
+              {isAvailable && (
+                <button
+                  className="button-gold flex-1 min-w-[160px] shadow-md hover:shadow-lg"
+                  onClick={handleBuyNow}
+                  type="button"
+                >
+                  <Zap aria-hidden="true" className="size-4.5 fill-current" />
+                  <span>Buy Now</span>
+                </button>
+              )}
+
               <button
-                className="button-primary flex-1 min-w-[200px] shadow-md hover:shadow-lg"
+                className="button-primary flex-1 min-w-[160px] shadow-md hover:shadow-lg"
                 disabled={!isAvailable}
                 onClick={() => {
                   if (addProduct(product, quantity)) {
@@ -213,18 +246,6 @@ const ProductDetailPage = () => {
                 <ShoppingBag aria-hidden="true" className="size-4.5" />
                 <span>{isAvailable ? 'Add to cart' : 'Currently unavailable'}</span>
               </button>
-              
-              {hasSafeInstagram && (
-                <a
-                  className="button-secondary"
-                  href={instagramUrl}
-                  rel="noreferrer noopener"
-                  target="_blank"
-                >
-                  <Instagram aria-hidden="true" className="size-4.5" />
-                  <span>View on Instagram</span>
-                </a>
-              )}
             </div>
 
             {/* Information Tabs */}

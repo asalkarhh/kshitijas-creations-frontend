@@ -1,5 +1,5 @@
-import { Instagram, ShoppingBag, Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Instagram, ShoppingBag, Eye, Zap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../../types';
 import { useToast } from '../common/Toast';
 import { useCart } from '../../store/cart-context';
@@ -9,6 +9,7 @@ import { ProductPrice } from './ProductPrice';
 import { isSafeUrl } from '../../utils/url';
 
 export const ProductCard = ({ product }: { product: Product }) => {
+  const navigate = useNavigate();
   const { addProduct } = useCart();
   const { showToast } = useToast();
   const image = product.media?.find((media) => media.isPrimary) ?? product.media?.[0];
@@ -22,6 +23,14 @@ export const ProductCard = ({ product }: { product: Product }) => {
     e.stopPropagation();
     if (addProduct(product)) {
       showToast(`${product.name} added to your bag.`);
+    }
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (addProduct(product)) {
+      navigate('/checkout');
     }
   };
 
@@ -94,31 +103,43 @@ export const ProductCard = ({ product }: { product: Product }) => {
           <div className="mt-3 flex items-baseline justify-between">
             <ProductPrice className="text-base font-extrabold text-ink font-sans" price={product.price} />
             {product.productCode && (
-              <span className="text-[0.65rem] font-mono text-muted/60">#{product.productCode}</span>
+              <span className="text-[0.65rem] font-mono text-muted/60">#${product.productCode}</span>
             )}
           </div>
         </div>
       </div>
 
       {/* Card Action Buttons */}
-      <div className="mt-3 flex items-center gap-2 pt-2 border-t border-beige/40">
+      <div className="mt-3 flex flex-col gap-2 pt-2 border-t border-beige/40">
         <Link
-          className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-full border border-maroon/20 bg-canvas/70 px-3 py-2 text-xs font-bold text-maroon transition-all hover:border-maroon hover:bg-rose/40"
+          className="inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-full border border-maroon/20 bg-canvas/70 px-3 py-2 text-xs font-bold text-maroon transition-all hover:border-maroon hover:bg-rose/40"
           to={`/products/${product.slug}`}
         >
           <Eye className="size-3.5" />
           <span>View details</span>
         </Link>
-        <button
-          aria-label={`Add ${product.name} to cart`}
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-maroon px-4 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-maroon/90 hover:shadow-sm disabled:cursor-not-allowed disabled:bg-muted/40"
-          disabled={!isAvailable}
-          onClick={handleAdd}
-          type="button"
-        >
-          <ShoppingBag aria-hidden="true" className="size-3.5" />
-          <span>Add</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            aria-label={`Buy ${product.name} now`}
+            className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full bg-gold px-3 py-2 text-xs font-bold text-ink shadow-xs transition-all hover:bg-gold/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={!isAvailable}
+            onClick={handleBuyNow}
+            type="button"
+          >
+            <Zap aria-hidden="true" className="size-3.5 fill-current" />
+            <span>Buy Now</span>
+          </button>
+          <button
+            aria-label={`Add ${product.name} to cart`}
+            className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-full bg-maroon px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-maroon/90 hover:shadow-sm disabled:cursor-not-allowed disabled:bg-muted/40"
+            disabled={!isAvailable}
+            onClick={handleAdd}
+            type="button"
+          >
+            <ShoppingBag aria-hidden="true" className="size-3.5" />
+            <span>Add</span>
+          </button>
+        </div>
       </div>
     </article>
   );
