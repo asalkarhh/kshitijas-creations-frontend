@@ -106,8 +106,8 @@ const HomePage = () => {
   return (
     <>
       {loadingBanners ? (
-        <section className="site-container pt-4 sm:pt-6">
-          <Skeleton className="min-h-[24rem] sm:min-h-[28rem] lg:min-h-[32rem] rounded-5xl w-full" />
+        <section className="w-full">
+          <Skeleton className="min-h-[26rem] w-full sm:min-h-[28rem] lg:min-h-[31rem]" />
         </section>
       ) : banners && banners.length > 0 ? (
         <BannerCarousel banners={banners} />
@@ -287,7 +287,7 @@ const HomePage = () => {
               </Link>
               <a
                 className="button-secondary"
-                href={env.instagramUrl}
+                href={env.instagramChatUrl}
                 rel="noreferrer"
                 target="_blank"
               >

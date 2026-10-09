@@ -39,6 +39,8 @@ const CheckoutPage = () => {
       mobileNumber: '',
       addressLine: '',
       city: '',
+      district: '',
+      subDistrict: '',
       state: 'Maharashtra',
       postalCode: '',
       customerNote: '',
@@ -72,7 +74,7 @@ const CheckoutPage = () => {
       const payload = {
         customerName: formValues.customerName.trim(),
         mobileNumber: formValues.mobileNumber.trim(),
-        addressLine: formValues.addressLine.trim(),
+        addressLine: `${formValues.addressLine.trim()}, Subdistrict: ${formValues.subDistrict.trim()}, District: ${formValues.district.trim()}`,
         city: formValues.city.trim(),
         state: formValues.state.trim(),
         postalCode: formValues.postalCode.trim(),
@@ -239,6 +241,11 @@ const CheckoutPage = () => {
                   inputMode="numeric"
                   maxLength={10}
                   placeholder="9823012345"
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value.replace(/\D/g, '').slice(0, 10);
+                }}
+                pattern="[0-9]{10}"
+                type="tel"
                 />
               </div>
               {errors.mobileNumber && (
@@ -283,12 +290,53 @@ const CheckoutPage = () => {
                 className="form-input text-base sm:text-sm"
                 id="city"
                 placeholder="e.g. Pune"
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value.replace(/[^A-Za-z .'-]/g, '');
+                }}
               />
               {errors.city && (
                 <p className="mt-1.5 text-xs text-maroon font-bold font-sans" id="city-error" role="alert">
                   {errors.city.message}
                 </p>
               )}
+            </div>
+
+            {/* District */}
+            <div>
+              <label className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink font-sans" htmlFor="district">
+                <Navigation className="size-3.5 text-maroon" /> District <span className="text-maroon">*</span>
+              </label>
+              <input
+                {...register('district')}
+                aria-describedby={errors.district ? 'district-error' : undefined}
+                aria-invalid={Boolean(errors.district)}
+                className="form-input text-base sm:text-sm"
+                id="district"
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value.replace(/[^A-Za-z .'-]/g, '');
+                }}
+                placeholder="e.g. Pune"
+              />
+              {errors.district && <p className="mt-1.5 text-xs text-maroon font-bold font-sans" id="district-error" role="alert">{errors.district.message}</p>}
+            </div>
+
+            {/* Subdistrict */}
+            <div>
+              <label className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink font-sans" htmlFor="subDistrict">
+                <Navigation className="size-3.5 text-maroon" /> Subdistrict <span className="text-maroon">*</span>
+              </label>
+              <input
+                {...register('subDistrict')}
+                aria-describedby={errors.subDistrict ? 'subDistrict-error' : undefined}
+                aria-invalid={Boolean(errors.subDistrict)}
+                className="form-input text-base sm:text-sm"
+                id="subDistrict"
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value.replace(/[^A-Za-z .'-]/g, '');
+                }}
+                placeholder="e.g. Haveli"
+              />
+              {errors.subDistrict && <p className="mt-1.5 text-xs text-maroon font-bold font-sans" id="subDistrict-error" role="alert">{errors.subDistrict.message}</p>}
             </div>
 
             {/* State */}
@@ -327,6 +375,11 @@ const CheckoutPage = () => {
                 inputMode="numeric"
                 maxLength={6}
                 placeholder="411005"
+                onInput={(event) => {
+                  event.currentTarget.value = event.currentTarget.value.replace(/\D/g, '').slice(0, 6);
+                }}
+                pattern="[0-9]{6}"
+                type="text"
               />
               {errors.postalCode && (
                 <p className="mt-1.5 text-xs text-maroon font-bold font-sans" id="postalCode-error" role="alert">

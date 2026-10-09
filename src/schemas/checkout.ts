@@ -19,7 +19,20 @@ export const checkoutSchema = z.object({
     .string()
     .trim()
     .min(2, 'City must be at least 2 characters.')
-    .max(100, 'City cannot exceed 100 characters.'),
+    .max(100, 'City cannot exceed 100 characters.')
+    .regex(/^[A-Za-z]+(?:[ .'-][A-Za-z]+)*$/, 'City can contain letters, spaces, hyphens, or apostrophes only.'),
+  district: z
+    .string()
+    .trim()
+    .min(2, 'District must be at least 2 characters.')
+    .max(100, 'District cannot exceed 100 characters.')
+    .regex(/^[A-Za-z]+(?:[ .'-][A-Za-z]+)*$/, 'District can contain letters, spaces, hyphens, or apostrophes only.'),
+  subDistrict: z
+    .string()
+    .trim()
+    .min(2, 'Subdistrict must be at least 2 characters.')
+    .max(100, 'Subdistrict cannot exceed 100 characters.')
+    .regex(/^[A-Za-z]+(?:[ .'-][A-Za-z]+)*$/, 'Subdistrict can contain letters, spaces, hyphens, or apostrophes only.'),
   state: z
     .string()
     .trim()

@@ -140,7 +140,7 @@ export const Footer = () => (
             rel="noreferrer"
             target="_blank"
           >
-            Asalkar Techworks
+            Asalkar Techworks Pvt. Ltd.
           </a>
         </p>
       </div>

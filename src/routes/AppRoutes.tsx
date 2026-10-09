@@ -13,6 +13,7 @@ const ProductDetailPage = lazy(() => import('../pages/ProductDetailPage'));
 const CartPage = lazy(() => import('../pages/CartPage'));
 const CheckoutPage = lazy(() => import('../pages/CheckoutPage'));
 const OrderSuccessPage = lazy(() => import('../pages/OrderSuccessPage'));
+const ReviewPage = lazy(() => import('../pages/ReviewPage'));
 const StaticPolicyPage = lazy(() => import('../pages/StaticPolicyPage'));
 const AdminLoginPage = lazy(() => import('../pages/AdminLoginPage'));
 const AdminDashboardPage = lazy(() => import('../pages/AdminDashboardPage'));
@@ -37,6 +38,7 @@ export const AppRoutes = () => (
         <Route element={<CartPage />} path="cart" />
         <Route element={<CheckoutPage />} path="checkout" />
         <Route element={<OrderSuccessPage />} path="order-success" />
+        <Route element={<ReviewPage />} path="review/:token" />
         <Route element={<StaticPolicyPage />} path="privacy" />
         <Route element={<StaticPolicyPage />} path="terms" />
         <Route element={<NotFoundPage />} path="*" />

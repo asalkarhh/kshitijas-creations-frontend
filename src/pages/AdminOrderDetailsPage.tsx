@@ -39,6 +39,7 @@ const AdminOrderDetailsPage = () => {
   const { showToast } = useToast();
 
   const [confirmModal, setConfirmModal] = useState<StatusTransitionModalState | null>(null);
+  const [reviewLinkLoading, setReviewLinkLoading] = useState(false);
 
   usePageMetadata({
     title: 'Order details',
@@ -66,6 +67,18 @@ const AdminOrderDetailsPage = () => {
       return await adminApi.updateOrderStatus(id, newStatus);
     },
     onSuccess: (updated) => {
+      if (updated && (updated.status === 'CONFIRMED' || updated.status === 'COMPLETED')) {
+        const customerPhone = updated.mobileNumber.replace(/\D/g, '');
+        const whatsappPhone = customerPhone.length === 10 ? `91${customerPhone}` : customerPhone;
+        const statusMessage = updated.status === 'CONFIRMED'
+          ? `Your order #${updated.orderNumber} has been confirmed. We are now preparing it for you.`
+          : `Your order #${updated.orderNumber} has been completed and dispatched. Thank you for shopping with us!`;
+        const items = updated.items
+          .map((item) => `${item.productName} x ${item.quantity}`)
+          .join('\n');
+        const message = `${statusMessage}\n\nOrder details:\n${items}\n\nTotal: ₹${updated.totalAmount}`;
+        window.open(`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      }
       queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
@@ -119,6 +132,26 @@ const AdminOrderDetailsPage = () => {
         });
         break;
     }
+  };
+
+  const sendReviewLink = async () => {
+    if (!id || !order) return;
+    setReviewLinkLoading(true);
+    try {
+      const { reviewUrl } = await adminApi.createReviewLink(id);
+      const phone = order.mobileNumber.replace(/\D/g, '');
+      const waPhone = phone.length === 10 ? `91${phone}` : phone;
+      const message = `Hi ${order.customerName}, thank you for your order #${order.orderNumber}. Please share your review here: ${reviewUrl}`;
+      window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      showToast('Review link prepared for WhatsApp.', 'success');
+    } catch (err) { showToast((err as ApiError).message || 'Could not create review link.', 'error'); }
+    finally { setReviewLinkLoading(false); }
+  };
+
+  const toggleReview = async () => {
+    if (!id || !order?.reviewUsed) return;
+    try { await adminApi.publishReview(id, !order.reviewPublished); await queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] }); showToast(order.reviewPublished ? 'Review hidden.' : 'Review published.', 'success'); }
+    catch (err) { showToast((err as ApiError).message || 'Could not update review visibility.', 'error'); }
   };
 
   if (isLoading) {
@@ -232,13 +265,39 @@ const AdminOrderDetailsPage = () => {
             )}
 
             {isFinalState && (
-              <span className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-neutral-600 border border-neutral-300">
-                Finalized Status (No further actions)
-              </span>
+              <>
+                {currentStatus === 'COMPLETED' && (
+                  <button
+                    className="button-secondary inline-flex items-center gap-1.5 py-2 px-4 text-xs font-semibold"
+                    disabled={reviewLinkLoading}
+                    onClick={sendReviewLink}
+                    type="button"
+                  >
+                    {reviewLinkLoading ? 'Preparing…' : 'Request Review'}
+                  </button>
+                )}
+                <span className="rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-semibold text-neutral-600 border border-neutral-300">
+                  Finalized Status (No further actions)
+                </span>
+              </>
             )}
           </div>
         </div>
       </div>
+
+      {order.reviewUsed && (
+        <section className="rounded-3xl border border-beige bg-surface p-6 shadow-soft">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-xl font-bold text-ink">Customer Review</h2>
+            <button className="button-secondary py-2 px-4 text-xs" onClick={toggleReview} type="button">
+              {order.reviewPublished ? 'Hide from product' : 'Publish on product'}
+            </button>
+          </div>
+          <p className="mt-3 text-sm text-ink">{order.reviewerName} · {order.reviewerCity} · {order.reviewRating} ★</p>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted">{order.reviewText || 'No written comment.'}</p>
+        </section>
+      )}
+      {(order.reviews?.length ?? 0) > 0 && <section className="rounded-3xl border border-beige bg-surface p-6 shadow-soft"><h2 className="font-display text-xl font-bold text-ink">Product Reviews</h2><div className="mt-4 space-y-4">{order.reviews?.map((review) => <article className="rounded-2xl border border-beige/70 p-4" key={review.id}><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-semibold text-ink">{review.productName}</p><p className="text-sm text-muted">{review.reviewerName} · {review.reviewerCity} · {review.rating} ★</p></div><button className="button-secondary py-2 px-4 text-xs" onClick={async () => { await adminApi.publishProductReview(review.id, !review.published); await queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] }); }} type="button">{review.published ? 'Hide from product' : 'Publish on product'}</button></div><p className="mt-2 whitespace-pre-line text-sm text-muted">{review.text || 'No written comment.'}</p></article>)}</div></section>}
 
       {/* Main Grid: Order Items + Customer Info */}
       <div className="grid gap-8 lg:grid-cols-3 lg:items-start">

@@ -7,12 +7,14 @@ import { AvailabilityBadge } from './AvailabilityBadge';
 import { ProductMedia } from './ProductMedia';
 import { ProductPrice } from './ProductPrice';
 import { isSafeUrl } from '../../utils/url';
+import { resolveMediaUrl } from '../../utils/media';
 
 export const ProductCard = ({ product }: { product: Product }) => {
   const navigate = useNavigate();
   const { addProduct } = useCart();
   const { showToast } = useToast();
   const image = product.media?.find((media) => media.isPrimary) ?? product.media?.[0];
+  const isVideo = image?.mediaType?.toUpperCase() === 'VIDEO' || /\.(mp4|webm|ogg)(\?|$)/i.test(image?.url ?? '');
   const isAvailable = product.isAvailable ?? product.available ?? true;
   const isFeatured = product.isFeatured ?? product.featured ?? false;
   const isNew = product.isNew ?? product.newArrival ?? false;
@@ -44,11 +46,24 @@ export const ProductCard = ({ product }: { product: Product }) => {
             className="block size-full"
             to={`/products/${product.slug}`}
           >
-            <ProductMedia
-              alt={image?.altText || product.name}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
-              src={image?.url}
-            />
+            {isVideo ? (
+              <video
+                aria-label={image?.altText || `${product.name} video`}
+                autoPlay
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                src={resolveMediaUrl(image?.url)}
+              />
+            ) : (
+              <ProductMedia
+                alt={image?.altText || product.name}
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                src={image?.url}
+              />
+            )}
           </Link>
 
           <div className="absolute left-3 top-3 flex flex-wrap gap-1.5 z-10 pointer-events-none">

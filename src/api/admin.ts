@@ -70,6 +70,13 @@ export const adminApi = {
       })
     ).data),
 
+  createReviewLink: async (id: string): Promise<{ reviewUrl: string }> =>
+    (await apiClient.post<{ reviewUrl: string }>(`/admin/orders/${id}/review-link`)).data,
+  publishReview: async (id: string, published: boolean): Promise<void> => {
+    await apiClient.patch(`/admin/orders/${id}/review`, undefined, { params: { published } });
+  },
+  publishProductReview: async (reviewId: string, published: boolean): Promise<void> => { await apiClient.patch(`/admin/orders/review/${reviewId}`, undefined, { params: { published } }); },
+
   // Categories
   getCategories: async (): Promise<Category[]> =>
     (await apiClient.get<unknown[]>('/admin/categories')).data.map(normalizeCategory),

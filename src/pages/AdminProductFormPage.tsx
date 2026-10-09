@@ -55,6 +55,8 @@ const AdminProductFormPage = () => {
   const [deletingMedia, setDeletingMedia] = useState<ProductMedia | null>(null);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [settingPrimaryMedia, setSettingPrimaryMedia] = useState<string | null>(null);
+  const [pendingDeletedMediaIds, setPendingDeletedMediaIds] = useState<string[]>([]);
+  const [pendingPrimaryMediaId, setPendingPrimaryMediaId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
@@ -122,7 +124,7 @@ const AdminProductFormPage = () => {
   // Warn before unload if unsaved changes exist
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty || pendingUploads.length > 0) {
+      if (isDirty || pendingUploads.length > 0 || pendingDeletedMediaIds.length > 0 || pendingPrimaryMediaId) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -313,6 +315,18 @@ const AdminProductFormPage = () => {
         if (uploadSuccess) {
           setPendingUploads([]);
         }
+      }
+
+      // Apply saved-media changes only after the product Save Changes request succeeds.
+      if (targetProductId) {
+        for (const mediaId of pendingDeletedMediaIds) {
+          await adminApi.deleteMedia(targetProductId, mediaId);
+        }
+        if (pendingPrimaryMediaId) {
+          await adminApi.setPrimaryMedia(targetProductId, pendingPrimaryMediaId);
+        }
+        setPendingDeletedMediaIds([]);
+        setPendingPrimaryMediaId(null);
       }
 
       // Invalidate queries
@@ -598,10 +612,10 @@ const AdminProductFormPage = () => {
                 {...register('description')}
                 aria-describedby={errors.description ? 'product-desc-error' : undefined}
                 aria-invalid={Boolean(errors.description)}
-                className="form-input text-sm min-h-[6rem] resize-y"
+                className="form-input text-sm min-h-[12rem] resize-y leading-relaxed"
                 id="product-desc"
-                placeholder="Detailed craft description, materials, care instructions"
-                rows={4}
+                placeholder={'Write complete product details here. Use a new line for each point, for example:\n• Hand-painted clay diyas\n• Perfect for Diwali gifting'}
+                rows={8}
               />
               {errors.description && (
                 <p className="mt-1 text-xs text-maroon" id="product-desc-error" role="alert">
@@ -727,7 +741,7 @@ const AdminProductFormPage = () => {
                     Saved Media
                   </p>
                   <div className="space-y-2.5">
-                    {existingProduct.media.map((media) => (
+                    {existingProduct.media.filter((media) => !pendingDeletedMediaIds.includes(media.id)).map((media) => (
                       <div
                         className="flex items-center gap-3 rounded-2xl border border-beige p-2.5 bg-[#fdfcfa]"
                         key={media.id}
@@ -744,7 +758,7 @@ const AdminProductFormPage = () => {
                               src={media.url}
                             />
                           )}
-                          {media.isPrimary && (
+                          {(media.isPrimary && !pendingPrimaryMediaId || pendingPrimaryMediaId === media.id) && (
                             <span className="absolute bottom-0 inset-x-0 bg-maroon/90 text-white text-[0.6rem] font-bold text-center py-0.5">
                               Primary
                             </span>
@@ -762,11 +776,11 @@ const AdminProductFormPage = () => {
 
                         <button
                           className="text-[0.68rem] font-semibold text-maroon hover:underline disabled:opacity-50"
-                          disabled={media.isPrimary || settingPrimaryMedia === media.id}
-                          onClick={() => setPrimaryMedia(media)}
+                          disabled={(media.isPrimary && !pendingPrimaryMediaId) || settingPrimaryMedia === media.id}
+                          onClick={() => setPendingPrimaryMediaId(media.id)}
                           type="button"
                         >
-                          {media.isPrimary ? 'Primary' : 'Make primary'}
+                          {(media.isPrimary && !pendingPrimaryMediaId) || pendingPrimaryMediaId === media.id ? 'Primary' : 'Make primary'}
                         </button>
 
                         <button
@@ -904,10 +918,15 @@ const AdminProductFormPage = () => {
       {/* Delete Media Confirmation Dialog */}
       <ConfirmationDialog
         confirmLabel="Delete Media Asset"
-        description="Are you sure you want to delete this media asset? This action will remove it from the product gallery immediately."
+        description="This media asset will be removed when you click Save Changes."
         isOpen={Boolean(deletingMedia)}
         onClose={() => setDeletingMedia(null)}
-        onConfirm={() => deletingMedia && deleteMediaMutation.mutate(deletingMedia)}
+        onConfirm={() => {
+          if (deletingMedia) {
+            setPendingDeletedMediaIds((current) => [...current, deletingMedia.id]);
+            setDeletingMedia(null);
+          }
+        }}
         title="Delete Media Asset"
       />
     </div>

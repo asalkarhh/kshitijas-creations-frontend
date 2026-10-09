@@ -232,6 +232,7 @@ const AdminCategoriesPage = () => {
                   <th className="py-3 px-3">Order</th>
                   <th className="py-3 px-3">Category Name</th>
                   <th className="py-3 px-3">Description</th>
+                  <th className="py-3 px-3">Products</th>
                   <th className="py-3 px-3">Status</th>
                   <th className="py-3 px-3">Created</th>
                   <th className="py-3 px-3 text-right">Actions</th>
@@ -251,8 +252,16 @@ const AdminCategoriesPage = () => {
                           /{cat.slug}
                         </span>
                       </td>
-                      <td className="py-3.5 px-3 text-xs text-muted max-w-xs truncate">
-                        {cat.description || '—'}
+                      <td
+                        className="py-3.5 px-3 text-xs text-muted max-w-xs"
+                        title={cat.description || undefined}
+                      >
+                        {cat.description
+                          ? `${cat.description.trim().split(/\s+/).slice(0, 5).join(' ')}${cat.description.trim().split(/\s+/).length > 5 ? '…' : ''}`
+                          : '—'}
+                      </td>
+                      <td className="py-3.5 px-3 text-sm font-semibold text-ink">
+                        {cat.productCount ?? 0}
                       </td>
                       <td className="py-3.5 px-3">
                         {isActive ? (

@@ -3,6 +3,7 @@ import type { KeyboardEvent, TouchEvent } from 'react';
 import type { ProductMedia as ProductMediaType } from '../../types';
 import { ProductMedia } from './ProductMedia';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { resolveMediaUrl } from '../../utils/media';
 
 interface ProductGalleryProps {
   media: ProductMediaType[];
@@ -62,15 +63,17 @@ export const ProductGallery = ({ media, productName }: ProductGalleryProps) => {
   };
 
   const renderMedia = (m: ProductMediaType, isModal = false) => {
-    const isVideo = m.url.endsWith('.mp4') || m.url.endsWith('.webm');
+    const isVideo = m.mediaType?.toUpperCase() === 'VIDEO' || /\.(mp4|webm|ogg)(\?|$)/i.test(m.url);
     if (isVideo) {
       return (
         <video
-          src={m.url}
+          src={resolveMediaUrl(m.url)}
           controls
           className="h-full w-full object-contain bg-black"
           playsInline
-          autoPlay={false}
+          autoPlay
+          loop
+          muted
           preload="metadata"
           aria-label={m.altText || `${productName} video`}
         />
@@ -140,7 +143,7 @@ export const ProductGallery = ({ media, productName }: ProductGalleryProps) => {
               aria-pressed={idx === activeIndex}
               type="button"
             >
-              {m.url.endsWith('.mp4') || m.url.endsWith('.webm') ? (
+              {m.mediaType?.toUpperCase() === 'VIDEO' || /\.(mp4|webm|ogg)(\?|$)/i.test(m.url) ? (
                 <div className="h-full w-full bg-black flex items-center justify-center">
                   <span className="text-white text-xs font-semibold">Video</span>
                 </div>

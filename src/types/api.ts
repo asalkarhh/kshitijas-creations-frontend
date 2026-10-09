@@ -70,6 +70,14 @@ export interface AdminOrderDetail {
   createdAt: string;
   updatedAt?: string;
   items: OrderItemDetail[];
+  reviews?: { id: string; productId: string | number; productName: string; rating: number; text?: string; reviewerName: string; reviewerCity: string; published: boolean }[];
+  reviewRating?: number;
+  reviewText?: string;
+  reviewerName?: string;
+  reviewerCity?: string;
+  reviewProductId?: string | number;
+  reviewPublished?: boolean;
+  reviewUsed?: boolean;
 }
 
 export interface AdminOrderListItem {

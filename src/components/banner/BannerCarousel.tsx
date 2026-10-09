@@ -37,7 +37,7 @@ export const BannerCarousel = ({ banners, intervalMs = 6000 }: BannerCarouselPro
     <section
       aria-label="Featured collections"
       aria-roledescription="carousel"
-      className="site-container pt-4 sm:pt-6"
+      className="w-full pt-0"
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false);
       }}
@@ -50,7 +50,7 @@ export const BannerCarousel = ({ banners, intervalMs = 6000 }: BannerCarouselPro
       onMouseLeave={() => setPaused(false)}
       tabIndex={0}
     >
-      <div className="relative aspect-[4/5] sm:aspect-[16/6] lg:aspect-[16/5.2] min-h-[24rem] sm:min-h-[28rem] lg:min-h-[32rem] w-full overflow-hidden rounded-5xl bg-beige/60 shadow-float border border-white/80">
+      <div className="relative min-h-[26rem] w-full overflow-hidden bg-beige/60 shadow-float sm:aspect-[16/6] sm:min-h-[28rem] lg:aspect-[16/5] lg:min-h-[31rem]">
         <picture>
           {banner.mobileImageUrl && (
             <source media="(max-width: 639px)" srcSet={banner.mobileImageUrl} />
@@ -67,8 +67,6 @@ export const BannerCarousel = ({ banners, intervalMs = 6000 }: BannerCarouselPro
         </picture>
         
         {/* Soft luxury ambient gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-canvas/98 via-canvas/85 to-transparent sm:from-canvas/95 sm:via-canvas/60 sm:to-transparent" />
-        
         {/* Content Box */}
         <div
           aria-live="polite"

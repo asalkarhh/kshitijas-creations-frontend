@@ -1,6 +1,6 @@
 import { Instagram, ShieldCheck, ShoppingBag, Sparkles, Plus, Minus, MessageCircle, Truck, Zap } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { env } from '../app/config/env';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { useToast } from '../components/common/Toast';
@@ -15,6 +15,7 @@ import { useCart } from '../store/cart-context';
 import { Skeleton } from '../components/common/Skeleton';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { isSafeUrl } from '../utils/url';
+import { apiClient } from '../api/client';
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,8 +24,10 @@ const ProductDetailPage = () => {
   const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'details' | 'care' | 'delivery'>('details');
+  const [reviews, setReviews] = useState<{ rating: number; text: string; name: string; city: string }[]>([]);
 
   const { data: product, isLoading, error, refetch } = useProduct(slug ?? '');
+  useEffect(() => { if (product?.id) apiClient.get(`/reviews/product/${product.id}`).then((r) => setReviews(r.data)).catch(() => setReviews([])); }, [product?.id]);
   
   const { data: relatedProductsResponse } = useProducts(
     product?.category?.slug ? { category: product.category.slug, size: 8 } : undefined,
@@ -171,10 +174,6 @@ const ProductDetailPage = () => {
               </p>
             )}
 
-            <p className="mt-2 leading-relaxed text-muted font-sans text-sm">
-              {product.description}
-            </p>
-            
             {/* Quantity Stepper & Instagram Row */}
             <div className="mt-7 flex flex-wrap items-center gap-4">
               {isAvailable && (
@@ -282,16 +281,9 @@ const ProductDetailPage = () => {
 
               <div className="mt-4 text-xs sm:text-sm text-muted leading-relaxed font-sans">
                 {activeTab === 'details' && (
-                  <ul className="space-y-2">
-                    <li className="flex items-center gap-2">
-                      <Sparkles className="size-4 text-gold shrink-0" />
-                      Handmade in small batches in India.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <ShieldCheck className="size-4 text-maroon shrink-0" />
-                      Tested skin-safe materials & durable craftsmanship.
-                    </li>
-                  </ul>
+                  <div className="whitespace-pre-line text-sm leading-7 text-muted">
+                    {product.description || 'Handmade in small batches in India.'}
+                  </div>
                 )}
                 {activeTab === 'care' && (
                   <p>
@@ -309,6 +301,9 @@ const ProductDetailPage = () => {
                       Direct WhatsApp order confirmation with real-time updates.
                     </li>
                   </ul>
+                )}
+                {reviews.length > 0 && activeTab === 'details' && (
+                  <div className="mt-6 border-t border-beige/60 pt-5"><h3 className="font-display text-lg font-bold text-ink">Customer reviews</h3><div className="mt-3 space-y-4">{reviews.map((review, index) => <article className="rounded-2xl border border-beige/70 bg-surface/60 p-4" key={`${review.name}-${index}`}><p className="font-semibold text-ink">{review.rating} ★ · {review.name} <span className="font-normal text-muted">from {review.city}</span></p><p className="mt-1 text-sm text-muted">{review.text}</p></article>)}</div></div>
                 )}
               </div>
             </div>
