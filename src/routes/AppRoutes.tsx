@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { PagePreloader } from '../components/common/PagePreloader';
 import { ProtectedAdminRoute, PublicOnlyAdminRoute } from '../store/auth-context';
+import { PageTransitionPreloader } from './PageTransitionPreloader';
 import { ScrollRestoration } from './ScrollRestoration';
 
 const PublicLayout = lazy(() => import('../layouts/PublicLayout'));
@@ -26,8 +27,9 @@ const AdminOrderDetailsPage = lazy(() => import('../pages/AdminOrderDetailsPage'
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 export const AppRoutes = () => (
-  <Suspense fallback={<LoadingSpinner label="Loading page" />}>
+  <Suspense fallback={<PagePreloader label="Loading page" />}>
     <ScrollRestoration />
+    <PageTransitionPreloader />
     <Routes>
       {/* Public Routes */}
       <Route element={<PublicLayout />} path="/">

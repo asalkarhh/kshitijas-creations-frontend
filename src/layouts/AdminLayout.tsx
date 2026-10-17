@@ -10,13 +10,15 @@ import {
   X,
   Sparkles,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import { adminApi } from '../api/admin';
 import { BrandMark } from '../components/layout/BrandMark';
+import { PagePreloader } from '../components/common/PagePreloader';
 import { useAuth } from '../store/auth-context';
 import brandLogo from '../assets/kshitija creation.jpg';
+import { registerAdminPush } from '../push/adminPush';
 
 const navItems = [
   { name: 'Dashboard', to: '/admin', icon: LayoutDashboard, end: true },
@@ -30,6 +32,10 @@ const AdminLayout = () => {
   const { admin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    registerAdminPush().catch(() => undefined);
+  }, []);
 
   const { data: unviewedData } = useQuery({
     queryKey: ['admin', 'unviewed-orders-count'],
@@ -254,7 +260,17 @@ const AdminLayout = () => {
 
         {/* Content Area */}
         <main className="min-w-0">
-          <Outlet />
+          <Suspense
+            fallback={
+              <PagePreloader
+                fullscreen={false}
+                label="Loading atelier section"
+                themeLine="Opening private Artisan Atelier studio..."
+              />
+            }
+          >
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
