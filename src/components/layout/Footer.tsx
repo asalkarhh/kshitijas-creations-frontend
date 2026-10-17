@@ -49,7 +49,7 @@ export const Footer = () => (
 
     <div className="site-container grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] lg:py-16">
       <div>
-        <BrandMark />
+        <BrandMark size="lg" />
         <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted">
           Thoughtfully handcrafted jewellery, celebratory keepsakes, and festive gifts made in small batches with love, care, and individual attention in every detail.
         </p>

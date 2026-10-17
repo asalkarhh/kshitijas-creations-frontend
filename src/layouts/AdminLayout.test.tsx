@@ -49,5 +49,12 @@ describe('AdminLayout', () => {
 
     expect(screen.queryByRole('dialog', { name: 'Admin mobile navigation' })).toBeNull();
   });
+
+  it('renders unviewed orders count badge when there are unviewed orders', async () => {
+    renderWithProviders(<AdminLayout />);
+
+    expect(await screen.findByText('Kshitija Asalkar')).toBeVisible();
+    expect(await screen.findByText('2')).toBeVisible();
+  });
 });
 

@@ -6,6 +6,7 @@ import { useCart } from '../../store/cart-context';
 import { AnnouncementBar } from './AnnouncementBar';
 import { BrandMark } from './BrandMark';
 import { MobileNavigation } from './MobileNavigation';
+import { scrollToTop } from '../../utils/scrollToTop';
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `relative px-3.5 py-2 text-sm font-semibold tracking-wide transition-all duration-200 rounded-full ${
@@ -24,7 +25,7 @@ export const Header = () => {
       <div className="site-container flex h-20 items-center justify-between gap-4">
         <BrandMark />
         <nav aria-label="Main navigation" className="hidden items-center gap-1.5 lg:flex">
-          <NavLink className={navClass} end to="/">
+          <NavLink className={navClass} end to="/" onClick={scrollToTop}>
             Home
           </NavLink>
           <NavLink className={navClass} to="/products">

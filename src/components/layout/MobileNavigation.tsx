@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { env } from '../../app/config/env';
 import { useCart } from '../../store/cart-context';
 import { Modal } from '../common/Modal';
+import { scrollToTop } from '../../utils/scrollToTop';
 
 interface MobileNavigationProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
       <nav aria-label="Mobile navigation">
         <ul className="space-y-1">
           <li>
-            <NavLink className={mobileLinkClass} onClick={onClose} to="/">
+            <NavLink className={mobileLinkClass} onClick={() => { onClose(); scrollToTop(); }} to="/">
               Home
             </NavLink>
           </li>

@@ -307,10 +307,15 @@ const AdminOrdersPage = () => {
                     <tr className="hover:bg-rose/5 transition-colors" key={order.orderNumber}>
                       <td className="py-3.5 px-3 font-mono font-bold text-ink">
                         <Link
-                          className="hover:text-maroon underline-offset-2 hover:underline"
+                          className="hover:text-maroon underline-offset-2 hover:underline inline-flex items-center gap-2"
                           to={`/admin/orders/${targetId}`}
                         >
-                          {order.orderNumber}
+                          <span>{order.orderNumber}</span>
+                          {order.viewed === false && (
+                            <span className="inline-flex items-center rounded-full bg-rose-100 px-1.5 py-0.5 text-[0.62rem] font-bold text-maroon uppercase tracking-wider">
+                              New
+                            </span>
+                          )}
                         </Link>
                       </td>
                       <td className="py-3.5 px-3 font-semibold text-ink">

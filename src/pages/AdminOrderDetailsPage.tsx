@@ -14,7 +14,7 @@ import {
   User,
   XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { adminApi } from '../api/admin';
 import { OrderStatusBadge } from '../components/admin/OrderStatusBadge';
@@ -60,6 +60,14 @@ const AdminOrderDetailsPage = () => {
     staleTime: 30_000,
   });
 
+  useEffect(() => {
+    if (order) {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'unviewed-orders-count'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+    }
+  }, [order, queryClient]);
+
   // Order status update mutation
   const statusMutation = useMutation({
     mutationFn: async (newStatus: string) => {
@@ -82,6 +90,7 @@ const AdminOrderDetailsPage = () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'order', id] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'unviewed-orders-count'] });
       showToast(
         updated
           ? `Order #${updated.orderNumber} marked as ${updated.status}.`

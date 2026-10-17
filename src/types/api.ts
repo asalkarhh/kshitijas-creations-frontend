@@ -57,6 +57,7 @@ export interface AdminOrderDetail {
   id: string;
   orderNumber: string;
   status: 'PLACED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
+  viewed?: boolean;
   customerName: string;
   mobileNumber: string;
   addressLine: string;
@@ -90,6 +91,7 @@ export interface AdminOrderListItem {
   itemCount: number;
   totalAmount: number;
   status: 'PLACED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | string;
+  viewed?: boolean;
   createdAt: string;
 }
 
@@ -133,6 +135,7 @@ export interface DashboardStats {
   confirmedOrders: number;
   completedOrders: number;
   cancelledOrders: number;
+  unviewedOrders?: number;
 }
 
 export interface DashboardRecentOrder {

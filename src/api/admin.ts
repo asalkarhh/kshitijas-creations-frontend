@@ -26,7 +26,14 @@ export const adminApi = {
   dashboard: async (): Promise<DashboardResponse> => {
     const res = (await apiClient.get<Record<string, unknown>>('/admin/dashboard')).data;
     if (res.stats && typeof res.stats === 'object') {
-      return res as unknown as DashboardResponse;
+      const statsObj = res.stats as Record<string, unknown>;
+      return {
+        ...res,
+        stats: {
+          ...statsObj,
+          unviewedOrders: Number(statsObj.unviewedOrders ?? statsObj.placedOrders ?? statsObj.newOrders ?? 0),
+        },
+      } as unknown as DashboardResponse;
     }
     return {
       stats: {
@@ -38,9 +45,20 @@ export const adminApi = {
         confirmedOrders: Number(res.confirmedOrders ?? 0),
         completedOrders: Number(res.completedOrders ?? 0),
         cancelledOrders: Number(res.cancelledOrders ?? 0),
+        unviewedOrders: Number(res.unviewedOrders ?? res.placedOrders ?? res.newOrders ?? 0),
       },
       recentOrders: (res.recentOrders as DashboardResponse['recentOrders']) ?? [],
     };
+  },
+
+  getUnviewedOrdersCount: async (): Promise<{ count: number }> => {
+    try {
+      const res = await apiClient.get<{ count: number }>('/admin/orders/unviewed-count');
+      return res.data;
+    } catch {
+      const dash = await adminApi.dashboard();
+      return { count: dash.stats.unviewedOrders ?? dash.stats.placedOrders ?? 0 };
+    }
   },
 
   // Orders

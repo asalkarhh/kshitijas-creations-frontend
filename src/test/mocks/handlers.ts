@@ -626,6 +626,15 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
+  // GET /api/v1/admin/orders/unviewed-count
+  http.get('http://localhost:8080/api/v1/admin/orders/unviewed-count', ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    return HttpResponse.json({ count: 2 });
+  }),
+
   // GET /api/v1/admin/orders
   http.get('http://localhost:8080/api/v1/admin/orders', ({ request }) => {
     const authHeader = request.headers.get('Authorization');

@@ -1,6 +1,4 @@
 import {
-  Gift,
-  Heart,
   Instagram,
   MapPin,
   MessageCircleHeart,
@@ -24,6 +22,7 @@ import { useBanners } from '../hooks/use-banners';
 import { useCategories } from '../hooks/use-categories';
 import { useProducts } from '../hooks/use-products';
 import { Skeleton } from '../components/common/Skeleton';
+import handcraftedImg from '../assets/handcrafted.png';
 import kshitijaCreationImg from '../assets/kshitija creation.jpg';
 import type { Product } from '../types';
 
@@ -251,9 +250,6 @@ const HomePage = () => {
                   src={kshitijaCreationImg}
                 />
               </div>
-              <div className="absolute bottom-2 right-2 grid size-12 place-items-center rounded-full bg-white text-maroon shadow-lg border-2 border-beige">
-                <Instagram aria-hidden="true" className="size-6 text-maroon" />
-              </div>
             </div>
           </div>
         </div>
@@ -262,17 +258,17 @@ const HomePage = () => {
       {/* Artisan Values & Love Section */}
       <section className="section-space bg-gradient-to-b from-rose/20 via-canvas to-canvas">
         <div className="site-container grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div className="relative mx-auto grid aspect-square w-full max-w-md place-items-center rounded-[45%_55%_52%_48%/55%_45%_55%_45%] bg-gradient-to-br from-beige/80 to-rose/40 shadow-soft">
-            <div className="grid size-44 place-items-center rounded-full bg-surface shadow-card sm:size-52 border border-beige/60">
-              <Heart
-                aria-hidden="true"
-                className="size-20 text-maroon animate-pulse-glow"
-                fill="rgb(var(--color-rose))"
-                strokeWidth={1.2}
-              />
+          <div className="group relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-full border-8 border-surface bg-beige shadow-soft ring-1 ring-gold/30">
+            <img
+              alt="Kshitija Creations artisan crafting a floral jewellery piece by hand"
+              className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+              loading="lazy"
+              src={handcraftedImg}
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-maroon/20 via-transparent to-white/10" />
+            <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/50 bg-ink/35 px-4 py-1.5 text-center text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+              Made with love
             </div>
-            <Sparkles aria-hidden="true" className="absolute right-10 top-10 size-8 text-gold animate-bounce" />
-            <Gift aria-hidden="true" className="absolute bottom-10 left-10 size-9 text-maroon/50" />
           </div>
           <div>
             <SectionHeading

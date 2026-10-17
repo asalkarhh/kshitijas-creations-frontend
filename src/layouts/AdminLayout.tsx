@@ -11,9 +11,12 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
+import { adminApi } from '../api/admin';
 import { BrandMark } from '../components/layout/BrandMark';
 import { useAuth } from '../store/auth-context';
+import brandLogo from '../assets/kshitija creation.jpg';
 
 const navItems = [
   { name: 'Dashboard', to: '/admin', icon: LayoutDashboard, end: true },
@@ -27,6 +30,15 @@ const AdminLayout = () => {
   const { admin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+
+  const { data: unviewedData } = useQuery({
+    queryKey: ['admin', 'unviewed-orders-count'],
+    queryFn: adminApi.getUnviewedOrdersCount,
+    refetchInterval: 30_000,
+    staleTime: 10_000,
+  });
+
+  const unviewedCount = unviewedData?.count ?? 0;
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -105,8 +117,9 @@ const AdminLayout = () => {
               const Icon = item.icon;
               return (
                 <NavLink
+                  aria-label={item.name}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-2xl px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                    `flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                       isActive
                         ? 'bg-maroon text-white shadow-sm'
                         : 'text-ink/80 hover:bg-rose/40 hover:text-maroon'
@@ -116,8 +129,26 @@ const AdminLayout = () => {
                   key={item.to}
                   to={item.to}
                 >
-                  <Icon aria-hidden="true" className="size-4 shrink-0" />
-                  <span>{item.name}</span>
+                  {({ isActive }) => (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <Icon aria-hidden="true" className="size-4 shrink-0" />
+                        <span>{item.name}</span>
+                      </div>
+                      {item.name === 'Orders' && unviewedCount > 0 && (
+                        <span
+                          aria-hidden="true"
+                          className={`inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[0.68rem] font-bold tracking-normal shadow-xs transition-colors ${
+                            isActive
+                              ? 'bg-white text-maroon'
+                              : 'bg-[#D93848] text-white'
+                          }`}
+                        >
+                          {unviewedCount}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </NavLink>
               );
             })}
@@ -172,8 +203,9 @@ const AdminLayout = () => {
                     const Icon = item.icon;
                     return (
                       <NavLink
+                        aria-label={item.name}
                         className={({ isActive }) =>
-                          `flex items-center gap-3 rounded-2xl px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${
+                          `flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${
                             isActive
                               ? 'bg-maroon text-white'
                               : 'text-ink hover:bg-rose/20 hover:text-maroon'
@@ -183,8 +215,26 @@ const AdminLayout = () => {
                         key={item.to}
                         to={item.to}
                       >
-                        <Icon aria-hidden="true" className="size-4 shrink-0" />
-                        <span>{item.name}</span>
+                        {({ isActive }) => (
+                          <>
+                            <div className="flex items-center gap-3">
+                              <Icon aria-hidden="true" className="size-4 shrink-0" />
+                              <span>{item.name}</span>
+                            </div>
+                            {item.name === 'Orders' && unviewedCount > 0 && (
+                              <span
+                                aria-hidden="true"
+                                className={`inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[0.68rem] font-bold tracking-normal shadow-xs transition-colors ${
+                                  isActive
+                                    ? 'bg-white text-maroon'
+                                    : 'bg-[#D93848] text-white'
+                                }`}
+                              >
+                                {unviewedCount}
+                              </span>
+                            )}
+                          </>
+                        )}
                       </NavLink>
                     );
                   })}

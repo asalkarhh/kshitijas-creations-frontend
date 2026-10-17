@@ -21,6 +21,7 @@ import { Skeleton } from '../components/common/Skeleton';
 import { usePageMetadata } from '../hooks/use-page-metadata';
 import { useAuth } from '../store/auth-context';
 import { formatPrice } from '../utils/currency';
+import brandLogo from '../assets/kshitija creation.jpg';
 
 export const formatISTDateTime = (isoString?: string): string => {
   if (!isoString) return '—';
@@ -68,17 +69,26 @@ const AdminDashboardPage = () => {
   return (
     <div className="space-y-8 font-sans">
       {/* Header & Greeting */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-rose/30 px-3 py-0.5 text-[0.68rem] font-bold uppercase tracking-wider text-maroon">
-            <Sparkles className="size-2.5 text-gold" /> Atelier Overview
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-beige/80 bg-surface/80 p-5 sm:p-6 shadow-xs">
+        <div className="flex items-center gap-4 sm:gap-5">
+          <div className="relative size-16 sm:size-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/60 bg-white shadow-soft ring-2 ring-gold/20">
+            <img
+              alt="Kshitija's Creations"
+              className="size-full object-cover rounded-full"
+              src={brandLogo}
+            />
           </div>
-          <h1 className="mt-2 font-display text-3xl font-extrabold text-ink sm:text-4xl">
-            Welcome back, {admin?.name || 'Administrator'}
-          </h1>
-          <p className="mt-1 text-xs text-muted">
-            Here is the live status of your small-batch catalog, active promotions, and customer orders.
-          </p>
+          <div>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-rose/30 px-3 py-0.5 text-[0.68rem] font-bold uppercase tracking-wider text-maroon">
+              <Sparkles className="size-2.5 text-gold" /> Atelier Overview
+            </div>
+            <h1 className="mt-1 font-display text-2xl font-extrabold text-ink sm:text-3xl">
+              Welcome back, {admin?.name || 'Administrator'}
+            </h1>
+            <p className="mt-0.5 text-xs text-muted">
+              Here is the live status of your small-batch catalog, active promotions, and customer orders.
+            </p>
+          </div>
         </div>
 
         {/* Quick Actions Bar */}

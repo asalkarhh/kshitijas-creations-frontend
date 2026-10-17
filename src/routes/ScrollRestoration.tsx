@@ -9,7 +9,7 @@ export const ScrollRestoration = () => {
       window.requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView());
       return;
     }
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [hash, pathname]);
 
   return null;
