@@ -12,8 +12,10 @@ import type { Category, Product } from '../types';
 export const CategoriesPage = () => {
   usePageMetadata({
     title: 'All Categories - Kshitija’s Creations',
-    description: 'Explore our handcrafted jewellery, keepsakes, and festive gift collections by category.',
+    description: 'Explore our handcrafted jewellery, keepsakes, and festive gift collections by category created by Kshitija Latane.',
     canonicalPath: '/categories',
+    keywords:
+      "handmade jewellery categories, handcrafted earrings, chokers, necklaces, bracelets, diwali panti collection, keepsakes, Kshitija Creation categories, Atpadi",
   });
 
   const {
@@ -99,7 +101,11 @@ export const CategoriesPage = () => {
       {/* Category-wise Showcase Sections Below */}
       <div className="space-y-16 pt-4 border-t border-beige/60">
         {loadingCategories || loadingProducts ? (
-          <ProductSkeleton count={4} />
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </div>
         ) : (
           activeCategories.map((category: Category) => {
             const categoryProducts = allProducts.filter(

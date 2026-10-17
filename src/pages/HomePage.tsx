@@ -47,9 +47,11 @@ const highlights = [
 
 const HomePage = () => {
   usePageMetadata({
-    title: 'Handmade jewellery & keepsakes',
-    description: 'Discover thoughtful jewellery, gifts and keepsakes handcrafted in small batches.',
+    title: 'Handcrafted Jewellery & Keepsakes by Kshitija Latane',
+    description: 'Discover thoughtfully handmade jewellery, festive keepsakes, diwali panti, and personalized gifts by Kshitija Latane at Kshitija’s Creations in Atpadi, Maharashtra.',
     canonicalPath: '/',
+    keywords:
+      "Kshitija Creation, Kshitijas Creations, Kshitija's Creations, Kshitija Latane, Kshitija Latane Atpadi, Kshitija Latane handmade, handmade product, handmade products, handmade jewellery, handmade jewellery Atpadi, handmade gifts Atapadi, Atpadi, Atapadi, Sangli, Maharashtra, handcrafted earrings, chokers, necklaces, bracelets, bangles, jewellery combo set, floral jewellery, silk thread jewellery, bridal jewellery, diwali diva, diwali panti, handmade diwali panti, decorative diya, pooja thali, haldi kumkum gifts, festive gifts, keepsakes, return gifts, buy handmade jewellery online, custom handmade gifts, WhatsApp ordering jewellery, हस्तकला, हस्तकला दागिने, आटपाडी",
   });
 
   const { data: banners, isLoading: loadingBanners } = useBanners();

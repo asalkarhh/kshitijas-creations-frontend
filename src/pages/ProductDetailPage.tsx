@@ -51,6 +51,9 @@ const ProductDetailPage = () => {
     description: product?.shortDescription ?? product?.description ?? 'View handcrafted piece details.',
     canonicalPath: product ? `/products/${product.slug}` : undefined,
     image: primaryImage?.url,
+    keywords: product
+      ? `${product.name}, ${product.category?.name ?? 'handmade jewellery'}, handmade product, Kshitija Latane, Kshitija Creation, Atpadi, buy ${product.name} online`
+      : undefined,
     jsonLd: product
       ? {
           '@context': 'https://schema.org',
@@ -59,6 +62,10 @@ const ProductDetailPage = () => {
           image: primaryImage?.url ? [primaryImage.url] : undefined,
           description: product.shortDescription || product.description,
           sku: productCode || product.id,
+          brand: {
+            '@type': 'Brand',
+            name: "Kshitija's Creations",
+          },
           offers: {
             '@type': 'Offer',
             price: product.price,

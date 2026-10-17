@@ -46,9 +46,11 @@ const ProductsPage = () => {
   }, [search]);
 
   usePageMetadata({
-    title: 'All products',
-    description: 'Browse handmade earrings, bracelets, gifts and keepsakes handcrafted in small batches.',
+    title: 'All Products | Handcrafted Jewellery & Keepsakes',
+    description: 'Browse handmade earrings, chokers, necklaces, bracelets, diwali panti, gifts and keepsakes handcrafted in Atpadi by Kshitija Latane.',
     canonicalPath: '/products',
+    keywords:
+      "buy handmade jewellery, handmade earrings, handmade necklaces, handmade chokers, handcrafted bracelets, diwali panti online, handmade gifts Atpadi, Kshitija Latane handmade products, Kshitija Creation, Atpadi",
   });
 
   const { data: categoriesData } = useCategories();

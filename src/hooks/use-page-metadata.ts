@@ -6,6 +6,7 @@ interface PageMetadata {
   description: string;
   canonicalPath?: string;
   image?: string;
+  keywords?: string;
   jsonLd?: Record<string, unknown>;
 }
 
@@ -30,6 +31,7 @@ export const usePageMetadata = ({
   description,
   canonicalPath,
   image,
+  keywords,
   jsonLd,
 }: PageMetadata) => {
   useEffect(() => {
@@ -39,6 +41,10 @@ export const usePageMetadata = ({
     setMetaContent('meta[property="og:description"]', description);
     setMetaContent('meta[name="twitter:title"]', title);
     setMetaContent('meta[name="twitter:description"]', description);
+
+    if (keywords) {
+      setMetaContent('meta[name="keywords"]', keywords);
+    }
 
     if (image) {
       setMetaContent('meta[property="og:image"]', image);
@@ -74,6 +80,6 @@ export const usePageMetadata = ({
         script.remove();
       }
     };
-  }, [canonicalPath, description, image, jsonLd, title]);
+  }, [canonicalPath, description, image, jsonLd, keywords, title]);
 };
 
