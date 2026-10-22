@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 interface ModalProps {
@@ -48,7 +49,8 @@ export const Modal = ({ isOpen, onClose, title, children, position = 'center' }:
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
+    (
     <div
       className={`fixed inset-0 z-50 flex bg-ink/45 p-4 backdrop-blur-sm ${
         position === 'right' ? 'justify-end p-0' : 'items-center justify-center'
@@ -82,5 +84,7 @@ export const Modal = ({ isOpen, onClose, title, children, position = 'center' }:
         {children}
       </div>
     </div>
+    ),
+    document.body,
   );
 };

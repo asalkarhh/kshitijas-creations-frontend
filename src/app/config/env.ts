@@ -1,14 +1,33 @@
 const stripTrailingSlash = (value: string) => value.replace(/\/$/, '');
-const apiHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-const defaultApiBaseUrl = `http://${apiHost}:8080/api/v1`;
-const defaultMediaBaseUrl = `http://${apiHost}:8080/media`;
+const browserHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+const defaultApiBaseUrl = `http://${browserHost}:8080/api/v1`;
+const defaultMediaBaseUrl = `http://${browserHost}:8080/media`;
+
+const resolveNetworkUrl = (value: string | undefined, fallback: string) => {
+  const configured = value ?? fallback;
+  if (typeof window === 'undefined') return configured;
+
+  try {
+    const url = new URL(configured, window.location.origin);
+    if (
+      (url.hostname === 'localhost' || url.hostname === '127.0.0.1') &&
+      browserHost !== 'localhost' &&
+      browserHost !== '127.0.0.1'
+    ) {
+      url.hostname = browserHost;
+    }
+    return url.toString().replace(/\/$/, '');
+  } catch {
+    return configured;
+  }
+};
 
 export const env = Object.freeze({
   apiBaseUrl: stripTrailingSlash(
-    import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl,
+    resolveNetworkUrl(import.meta.env.VITE_API_BASE_URL, defaultApiBaseUrl),
   ),
   mediaBaseUrl: stripTrailingSlash(
-    import.meta.env.VITE_MEDIA_BASE_URL ?? defaultMediaBaseUrl,
+    resolveNetworkUrl(import.meta.env.VITE_MEDIA_BASE_URL, defaultMediaBaseUrl),
   ),
   instagramUrl:
     import.meta.env.VITE_INSTAGRAM_URL ?? 'https://www.instagram.com/kshitijas_creations/',
