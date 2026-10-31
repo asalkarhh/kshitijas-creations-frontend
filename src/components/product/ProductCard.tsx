@@ -37,7 +37,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-4xl border border-beige/60 bg-surface/90 p-3.5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-card">
+    <article className="group relative flex flex-col justify-between rounded-4xl border border-beige/60 bg-surface/90 p-3.5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-card overflow-hidden">
       <div>
         {/* Product Image Box - Image is a Clickable Link to Product Details */}
         <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-beige/40">
@@ -93,11 +93,16 @@ export const ProductCard = ({ product }: { product: Product }) => {
         </div>
 
         {/* Product Info */}
-        <div className="p-2 pt-3.5">
-          <div className="flex items-center justify-between gap-2">
-            <AvailabilityBadge isAvailable={isAvailable} />
+        <div className="p-2 pt-3.5 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 min-w-0">
+            <div className="shrink-0">
+              <AvailabilityBadge isAvailable={isAvailable} />
+            </div>
             {product.category?.name && (
-              <span className="text-[0.7rem] font-bold uppercase tracking-wider text-muted/70 font-sans">
+              <span
+                className="truncate text-[0.68rem] font-bold uppercase tracking-wider text-muted/70 font-sans max-w-full"
+                title={product.category.name}
+              >
                 {product.category.name}
               </span>
             )}
@@ -115,10 +120,12 @@ export const ProductCard = ({ product }: { product: Product }) => {
               {product.shortDescription}
             </p>
           )}
-          <div className="mt-3 flex items-baseline justify-between">
+          <div className="mt-3 flex flex-wrap items-baseline justify-between gap-1 min-w-0">
             <ProductPrice className="text-base font-extrabold text-ink font-sans" price={product.price} />
             {product.productCode && (
-              <span className="text-[0.65rem] font-mono text-muted/60">#${product.productCode}</span>
+              <span className="truncate text-[0.65rem] font-mono text-muted/60 max-w-full">
+                #{product.productCode}
+              </span>
             )}
           </div>
         </div>

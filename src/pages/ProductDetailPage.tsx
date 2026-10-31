@@ -143,7 +143,7 @@ const ProductDetailPage = () => {
 
         <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16 items-start">
           {/* Gallery Column */}
-          <div className="sticky top-28">
+          <div className="lg:sticky lg:top-28">
             <ProductGallery media={product.media ?? []} productName={product.name} />
           </div>
           

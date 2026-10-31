@@ -6,11 +6,11 @@ export const AnnouncementBar = () => (
     className="relative z-50 bg-gradient-to-r from-maroon via-[#7B2034] to-maroon px-4 py-2 text-center text-xs font-medium tracking-wider text-white sm:text-xs"
   >
     <div className="site-container flex items-center justify-center gap-2 sm:gap-3">
-      <Sparkles aria-hidden="true" className="size-3.5 animate-pulse text-gold" />
+      <Sparkles aria-hidden="true" className="size-3.5 animate-pulse text-gold shrink-0" />
       <span className="font-sans">
         Handcrafted in small batches <span className="text-gold/80 font-serif mx-1">•</span> Personal WhatsApp confirmation <span className="text-gold/80 font-serif mx-1">•</span> Delivery across India
       </span>
-      <Heart aria-hidden="true" className="hidden sm:inline-block size-3.5 fill-rose/40 text-rose" />
+      <Heart aria-hidden="true" className="hidden sm:inline-block size-3.5 fill-rose/40 text-rose shrink-0" />
     </div>
   </aside>
 );
